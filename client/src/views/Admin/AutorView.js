@@ -73,7 +73,7 @@ const DataTable = props => {
                             onMouseOver={() => {
                                 document
                                     .getElementById(row.id)
-                                    .style.backgroundColor = "lightblue"
+                                    .style.backgroundColor = "#ebf5fc"
                             }}
                             onMouseLeave={() => {
                                 document

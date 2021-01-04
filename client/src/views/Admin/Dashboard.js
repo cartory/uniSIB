@@ -18,7 +18,7 @@ import {
     Divider,
     IconButton,
     Container,
-    Link,
+    // Link,
     ListItem,
     ListItemText,
     ListItemIcon,
@@ -35,18 +35,18 @@ import {
     VerifiedUserSharp as VerifiedUserSharpIcon
 } from '@material-ui/icons'
 
-function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit" href="https://material-ui.com/">
-                Your Website
-      </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
+// function Copyright() {
+//     return (
+//         <Typography variant="body2" color="textSecondary" align="center">
+//             {'Copyright © '}
+//             <Link color="inherit" href="https://material-ui.com/">
+//                 Your Website
+//       </Link>{' '}
+//             {new Date().getFullYear()}
+//             {'.'}
+//         </Typography>
+//     );
+// }
 
 const MyAppBar = (props) => {
     const { open, classes, handleDrawerOpen } = props;

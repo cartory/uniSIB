@@ -15,12 +15,17 @@ import {
     TableBody,
     Typography,
 
+    Select,
+    MenuItem,
+    InputLabel,
+
     makeStyles,
 } from '@material-ui/core'
 
 import {
     Save as SaveIcon,
     Edit as EditIcon,
+    Remove as RemoveIcon,
     Replay as ReplayIcon,
     Delete as DeleteIcon,
 } from '@material-ui/icons'
@@ -55,12 +60,12 @@ const DataTable = props => {
             <TableHead>
                 <TableRow>
                     <TableCell size="small"><strong>ID</strong></TableCell>
-                    <TableCell align="center"><strong>Tipo</strong></TableCell>
-                    <TableCell align="center" ><strong>Nombre</strong></TableCell>
-                    <TableCell align="center"><strong>Descripción</strong></TableCell>
+                    <TableCell><strong>Tipo</strong></TableCell>
+                    <TableCell><strong>Nombre</strong></TableCell>
+                    <TableCell><strong>Descripción</strong></TableCell>
+                    <TableCell><strong>Ubi</strong></TableCell>
                     <TableCell align="center"><strong>Ubis</strong></TableCell>
-                    <TableCell align="center" ><strong>Ubi</strong></TableCell>
-                    <TableCell align="center" size="small"><strong>Acción</strong></TableCell>
+                    <TableCell size="small"><strong>Acción</strong></TableCell>
                 </TableRow>
             </TableHead>
             <TableBody>
@@ -72,7 +77,7 @@ const DataTable = props => {
                             onMouseOver={() => {
                                 document
                                     .getElementById(row.id)
-                                    .style.backgroundColor = "lightblue"
+                                    .style.backgroundColor = "#ebf5fc"
                             }}
                             onMouseLeave={() => {
                                 document
@@ -81,11 +86,11 @@ const DataTable = props => {
                             }}
                         >
                             <TableCell size="small"><strong>{row.id}</strong></TableCell>
-                            <TableCell align="center" >{row.tipo}</TableCell>
-                            <TableCell align="center">{row.nombre}</TableCell>
-                            <TableCell align="center">{row.descripcion}</TableCell>
+                            <TableCell>{row.tipo}</TableCell>
+                            <TableCell>{row.nombre}</TableCell>
+                            <TableCell>{row.descripcion}</TableCell>
+                            <TableCell>{row.ubicacion ?? <RemoveIcon />}</TableCell>
                             <TableCell align="center">{row.ubicaciones}</TableCell>
-                            <TableCell align="center" >{row.ubicacion ?? " - "}</TableCell>
                             <TableCell align="center" size="small">
                                 <Grid container direction="row">
                                     <Grid item title="edit">
@@ -119,9 +124,13 @@ const DataTable = props => {
 const Form = props => {
     const {
         classes,
-        edit = false, ubi,
+        edit = false, ubi, ubis,
         setUbi, setState, setEdit
     } = props;
+
+    const tipos = [
+        "Universidad", "Facultad", "Sección", "Librero", "Estante"
+    ];
 
     const onSubmit = event => {
         event.preventDefault();
@@ -142,6 +151,7 @@ const Form = props => {
         const { name, value } = target;
         ubi[name] = value;
         setUbi(ubi);
+        console.log(ubi);
     }
 
     return (
@@ -156,10 +166,10 @@ const Form = props => {
                 <Grid item xs={12} sm={12}>
                     <TextField
                         fullWidth
+                        required={!edit}
                         name="nombre"
                         label="Nombre"
                         autoComplete="given-name"
-                        required={!edit}
                         helperText={edit ? ubi.nombre : null}
                         onInput={e => onInput(e.target)}
                     />
@@ -167,17 +177,43 @@ const Form = props => {
                 <Grid item xs={12} sm={12}>
                     <TextField
                         fullWidth
-                        required={!edit}
-                        name="nacionalidad"
-                        label="Nacionalidad"
+                        name="descripcion"
+                        label="Descripción"
                         autoComplete="family-name"
                         helperText={edit ? ubi.tipo : null}
                         onInput={e => onInput(e.target)}
                     />
                 </Grid>
+                <Grid item xs={12} sm={6}>
+                    {/* <InputLabel htmlFor="max-width">Tipo Ubicación</InputLabel> */}
+                    <Select
+                        required
+                        fullWidth
+                        name="tipo"
+                        defaultValue=''
+                        onChange={event => onInput(event.target)}
+                    >
+                        {tipos.map(tipo => (
+                            <MenuItem key={tipo} alignItems="center" value={tipo}>{tipo}</MenuItem>
+                        ))}
+                    </Select>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    {/* <InputLabel htmlFor="max-width">Pertenece a</InputLabel> */}
+                    <Select
+                        fullWidth
+                        name="ubicacionID"
+                        defaultValue={ubi["id"] ?? ''}
+                        onChange={event => onInput(event.target)}
+                    >
+                        {ubis.map(ubi => (
+                            <MenuItem key={ubi.id} value={ubi.id}>{ubi.nombre}</MenuItem>
+                        ))}
+                    </Select>
+                </Grid>
                 <Grid item>
                     <Button
-                        size="large"
+                        size="small"
                         type="submit"
                         variant="contained"
                         color="primary"
@@ -188,8 +224,11 @@ const Form = props => {
                     <Button
                         type="reset"
                         variant="contained"
-                        onClick={() => setEdit(false)}
-                        size="large"
+                        onClick={() => {
+                            delete ubi.id
+                            setEdit(false)
+                        }}
+                        size="small"
                         className={classes.button}
                         startIcon={< ReplayIcon />}
                     >Limpiar</Button>
@@ -241,9 +280,11 @@ export const UbicacionView = props => {
                         <Form
                             classes={classes}
                             edit={edit} ubi={ubi}
+                            setUbi={setUbi}
                             setEdit={setEdit}
                             setAutor={setUbi}
                             setState={setState}
+                            ubis={data.filter(row => ubi.id !== row.id)}
                         />
                     </Paper>
                 </Grid>
