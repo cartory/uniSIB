@@ -32,6 +32,7 @@ router
     .put("/ubicaciones/:id", UbicacionController.editar)
     .delete("/ubicaciones/:id", UbicacionController.eliminar)
     //  SOLICITUD
+    .get("/solicitudes", SolicitudController.listar)
     .post("/solicitudes", SolicitudController.crear)
     .put("/solicitudes/:id", SolicitudController.editar)
     //  PERSONA

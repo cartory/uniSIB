@@ -1,6 +1,10 @@
 const { Solicitud } = require("../models/Solicitud");
 
 const SolicitudController = {
+    listar(_, res) {
+        Solicitud.verSolicitudes(res);
+    },
+
     crear(req, res) {
         const {
             estado, fechaSolicitud, cantidadDias, libroID, estudianteID,
