@@ -84,7 +84,7 @@ const Form = props => {
                 </Grid>
                 <Grid item xs={12}>
                     <Button
-                        size="large"
+                        size="small"
                         type="submit"
                         color="primary"
                         variant="contained"
@@ -97,7 +97,7 @@ const Form = props => {
                         variant="contained"
                         color="default"
                         onClick={() => setEdit(false)}
-                        size="large"
+                        size="small"
                         className={classes.button}
                         startIcon={< ReplayIcon />}
                     >Limpiar</Button>
@@ -179,7 +179,7 @@ export const GeneroView = () => {
     const [state, setState] = React.useState(true);
     const [genero, setGenero] = React.useState({});
 
-    const URL = "http://localhost:8000/api/generos";
+    const URL = "http://localhost:8080/api/generos";
 
     const onSubmit = (event) => {
         event.preventDefault();

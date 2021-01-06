@@ -12,7 +12,7 @@ import {
 
 import Title from './Title';
 
-const url = "http://localhost:8000/api/solicitudes";
+const url = "http://localhost:8080/api/solicitudes";
 
 //const preventDefault = event => event.preventDefault();
 

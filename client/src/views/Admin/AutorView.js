@@ -2,6 +2,7 @@
 import React from 'react';
 
 import {
+    Fab,
     Grid,
     Paper,
     Button,
@@ -26,7 +27,7 @@ import {
 
 import Title from './Title';
 
-const URL = "http://localhost:8000/api/autores";
+const URL = "http://localhost:8080/api/autores";
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -83,7 +84,16 @@ const DataTable = props => {
                         >
                             <TableCell size="small" ><strong>{row.id}</strong></TableCell>
                             <TableCell>{row.nombre}</TableCell>
-                            <TableCell>{row.nacionalidad}</TableCell>
+                            <TableCell>
+                                <Fab
+                                    disabled
+                                    size="small"
+                                    variant="contained"
+                                    style={{
+                                    }}
+                                >{row.nacionalidad}
+                                </Fab>
+                            </TableCell>
                             <TableCell align="center" size="small">
                                 <Grid container direction="row">
                                     <Grid item title="edit">
@@ -182,7 +192,7 @@ const Form = props => {
                 </Grid>
                 <Grid item>
                     <Button
-                        size="large"
+                        size="small"
                         type="submit"
                         variant="contained"
                         color="primary"
@@ -194,7 +204,7 @@ const Form = props => {
                         type="reset"
                         variant="contained"
                         onClick={() => setEdit(false)}
-                        size="large"
+                        size="small"
                         className={classes.button}
                         startIcon={< ReplayIcon />}
                     >Limpiar</Button>
@@ -211,7 +221,7 @@ const Form = props => {
 
 export const AutorView = props => {
     const classes = useStyles();
-  
+
     const [data, setData] = React.useState([]);
     const [autor, setAutor] = React.useState({});
 

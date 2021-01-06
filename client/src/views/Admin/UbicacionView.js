@@ -3,6 +3,7 @@
 import React from 'react';
 
 import {
+    Fab,
     Grid,
     Paper,
     Button,
@@ -32,7 +33,7 @@ import {
 
 import Title from './Title';
 
-const URL = "http://localhost:8000/api/ubicaciones";
+const URL = "http://localhost:8080/api/ubicaciones";
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -86,10 +87,29 @@ const DataTable = props => {
                             }}
                         >
                             <TableCell size="small"><strong>{row.id}</strong></TableCell>
-                            <TableCell>{row.tipo}</TableCell>
+                            <TableCell>
+                                <Fab
+                                    disabled
+                                    size="small"
+                                    variant="contained"
+                                    style={{
+                                    }}
+                                >{row.tipo}
+                                </Fab>
+                            </TableCell>
                             <TableCell>{row.nombre}</TableCell>
                             <TableCell>{row.descripcion}</TableCell>
-                            <TableCell>{row.ubicacion ?? <RemoveIcon />}</TableCell>
+                            <TableCell>{
+                                <Fab
+                                    disabled
+                                    size="small"
+                                    variant="contained"
+                                    style={{
+                                    }}
+                                >{row.ubicacion ?? <RemoveIcon />}
+                                </Fab>
+                            }
+                            </TableCell>
                             <TableCell align="center">{row.ubicaciones}</TableCell>
                             <TableCell align="center" size="small">
                                 <Grid container direction="row">
@@ -151,7 +171,6 @@ const Form = props => {
         const { name, value } = target;
         ubi[name] = value;
         setUbi(ubi);
-        console.log(ubi);
     }
 
     return (
@@ -185,7 +204,7 @@ const Form = props => {
                     />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    {/* <InputLabel htmlFor="max-width">Tipo Ubicación</InputLabel> */}
+                    <InputLabel htmlFor="max-width">Tipo Ubicación</InputLabel>
                     <Select
                         required
                         fullWidth
@@ -199,13 +218,14 @@ const Form = props => {
                     </Select>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    {/* <InputLabel htmlFor="max-width">Pertenece a</InputLabel> */}
+                    <InputLabel htmlFor="max-width">Pertenece a</InputLabel>
                     <Select
                         fullWidth
                         name="ubicacionID"
                         defaultValue={ubi["id"] ?? ''}
                         onChange={event => onInput(event.target)}
                     >
+                        <MenuItem key={0} value={0}>Ninguna</MenuItem>
                         {ubis.map(ubi => (
                             <MenuItem key={ubi.id} value={ubi.id}>{ubi.nombre}</MenuItem>
                         ))}
