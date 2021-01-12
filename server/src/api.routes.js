@@ -1,42 +1,45 @@
 const { Router } = require("express");
+const { NAutor } = require("./Negocio/NAutor");
 
 const router = Router();
 
 //  CONTROLADORES
-const { AutorController } = require("./controllers/AutorController");
-const { LibroController } = require("./controllers/LibroController");
-const { GeneroController } = require("./controllers/GeneroController");
-const { PersonaController } = require("./controllers/PersonaController");
-const { UbicacionController } = require("./controllers/UbicacionController");
-const { SolicitudController } = require("./controllers/SolicitudController");
+const { NLibro } = require("./Negocio/NLibro");
+const { NGenero } = require("./Negocio/NGenero");
+const { NUbicacion } = require("./Negocio/NUbicacion");
+const { NSolicitud } = require("./Negocio/NSolicitud");
+const { NEstudiante } = require("./Negocio/NEstudiante");
+
 
 router
     //  LIBRO
-    .get("/libros", LibroController.listar)
-    .post("/libros", LibroController.crear)
-    .put("/libros/:id", LibroController.editar)
-    .delete("/libros/:id", LibroController.eliminar)
+    .get("/libros", NLibro.listar)
+    .post("/libros", NLibro.crear)
+    .put("/libros/:id", NLibro.editar)
+    .delete("/libros/:id", NLibro.eliminar)
     //  AUTOR
-    .get("/autores", AutorController.listar)
-    .post("/autores", AutorController.crear)
-    .put("/autores/:id", AutorController.editar)
-    .delete("/autores/:id", AutorController.eliminar)
+    .get("/autores", NAutor.listar)
+    .post("/autores", NAutor.crear)
+    .put("/autores/:id", NAutor.editar)
+    .delete("/autores/:id", NAutor.eliminar)
     //  GÉNERO
-    .get("/generos", GeneroController.listar)
-    .post("/generos", GeneroController.crear)
-    .put("/generos/:id", GeneroController.editar)
-    .delete("/generos/:id", GeneroController.eliminar)
+    .get("/generos", NGenero.listar)
+    .post("/generos", NGenero.crear)
+    .put("/generos/:id", NGenero.editar)
+    .delete("/generos/:id", NGenero.eliminar)
     //  UBICACION
-    .get("/ubicaciones", UbicacionController.listar)
-    .post("/ubicaciones", UbicacionController.crear)
-    .put("/ubicaciones/:id", UbicacionController.editar)
-    .delete("/ubicaciones/:id", UbicacionController.eliminar)
+    .get("/ubicaciones", NUbicacion.listar)
+    .post("/ubicaciones", NUbicacion.crear)
+    .put("/ubicaciones/:id", NUbicacion.editar)
+    .delete("/ubicaciones/:id", NUbicacion.eliminar)
     //  SOLICITUD
-    .get("/solicitudes", SolicitudController.listar)
-    .post("/solicitudes", SolicitudController.crear)
-    .put("/solicitudes/:id", SolicitudController.editar)
-    //  PERSONA
-    .post("/personas/", PersonaController.crear)
-    .post("/personas/login", PersonaController.login);
+    .get("/solicitudes", NSolicitud.listar)
+    .post("/solicitudes", NSolicitud.crear)
+    .put("/solicitudes/:id", NSolicitud.editar)
+    //  ESTUDIANTE
+    .get("/estudiantes", NSolicitud.listar)
+    .post("/estudiantes", NEstudiante.crear)
+    .put("/estudiantes/:id", NEstudiante.editar)
+    .delete("/estudiantes/:id", NEstudiante.eliminar);
 
 module.exports = router;

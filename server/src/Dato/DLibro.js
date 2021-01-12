@@ -1,11 +1,11 @@
-const { Model } = require("./Model");
+const { Dato } = require("./Dato");
 
 const table = "libro";
 const cols = [
-    "nombre",
-    "descripcion",
+    "titulo",
+    "sinopsis",
     "fechaPublicacion",
-    "imagen",
+    "cantidad",
     "estado",
 
     "autorID",
@@ -13,10 +13,10 @@ const cols = [
     "ubicacionID",
 ];
 
-class Libro extends Model {
+class DLibro extends Dato {
     constructor() {
         super(table, cols);
     }
 }
 
-module.exports = { Libro: new Libro() };
+module.exports = { DLibro: new DLibro() };

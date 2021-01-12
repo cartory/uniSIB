@@ -1,6 +1,6 @@
-const { db } = require("../database");
+const { db } = require("../Conexion");
 
-class Model {
+class Dato {
     constructor(table, cols) {
         this.cols = cols;
         this.table = table;
@@ -28,4 +28,4 @@ class Model {
     }
 }
 
-module.exports = { Model }
+module.exports = { Dato }

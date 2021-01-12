@@ -1,16 +1,16 @@
-const { Model } = require("./Model");
+const { Dato } = require("./Dato");
 
 const table = "autor";
 const cols = [
     "nombre",
     "nacionalidad",
-    "imagen",
+    "biografia",
 ];
 
-class Autor extends Model {
+class DAutor extends Dato {
     constructor(){
         super(table, cols);
     }
 }
 
-module.exports = { Autor: new Autor() };
+module.exports = { DAutor: new DAutor() };

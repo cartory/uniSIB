@@ -1,6 +1,6 @@
-const { Solicitud } = require("../models/Solicitud");
+const { DSolicitud } = require("../Dato/DSolicitud");
 
-const SolicitudController = {
+const NSolicitud = {
     listar(_, res) {
         Solicitud.verSolicitudes(res);
     },
@@ -10,7 +10,7 @@ const SolicitudController = {
             estado, fechaSolicitud, cantidadDias, libroID, estudianteID,
         } = req.body;
 
-        Solicitud.crear(res, [
+        DSolicitud.crear(res, [
             estado, fechaSolicitud, cantidadDias, estudianteID
         ], libroID);
     },
@@ -20,11 +20,11 @@ const SolicitudController = {
             estado, fechaSolicitud, cantidadDias, libroID, estudianteID
         } = req.body;
 
-        Solicitud.editar(res, [
+        DSolicitud.editar(res, [
             estado, fechaSolicitud, cantidadDias, 
             libroID, estudianteID, req.params.id
         ]);
     }
 };
 
-module.exports = { SolicitudController };
+module.exports = { NSolicitud };

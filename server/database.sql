@@ -3,13 +3,16 @@ create table autor (
   id int AUTO_INCREMENT PRIMARY key,
   nombre varchar(50) not null,
   nacionalidad varchar(20),
-  imagen text
+  biografia text
 );
 
 create table genero (
   id int AUTO_INCREMENT PRIMARY key,
   nombre varchar(20) not null,
-  descripcion text
+  descripcion text,
+
+  generoID int,
+  foreign key (generoID) references genero(id)
 );
 
 create table ubicacion (
@@ -24,10 +27,10 @@ create table ubicacion (
 
 create table libro (
 	  id int AUTO_INCREMENT PRIMARY key,
-  	nombre varchar(30) not NULL,
-  	descripcion text,
+  	titulo varchar(30) not NULL,
+  	sinopsis text,
     fechaPublicacion date,
-    imagen text,
+    cantidad int not null,
     estado varchar(10),
 
     autorID int,
@@ -39,13 +42,12 @@ create table libro (
     foreign key (ubicacionID) references ubicacion(id)
 );
 
-create table persona (
+create table estudiante (
   id int AUTO_INCREMENT PRIMARY key,
   cedula int not null,
   nombre varchar(50) not null,
   correo varchar(30),
   registro int,
-  contrasenia text not null
 );
 
 create table solicitud (

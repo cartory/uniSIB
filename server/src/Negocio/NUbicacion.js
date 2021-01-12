@@ -1,13 +1,13 @@
-const { Ubicacion } = require("../models/Ubicacion");
+const { DUbicacion } = require("../Dato/DUbicacion");
 
-const UbicacionController = {
+const NUbicacion = {
     listar(_, res) {
-        Ubicacion.listar(res);
+        DUbicacion.listar(res);
     },
 
     crear(req, res) {
         const { tipo, nombre, descripcion, ubicacionID } = req.body;
-        Ubicacion.crear(res, [
+        DUbicacion.crear(res, [
             tipo, nombre, descripcion, ubicacionID
         ]);
     },
@@ -16,14 +16,14 @@ const UbicacionController = {
         const {
             tipo, nombre, descripcion, ubicacionID
         } = req.body;
-        Ubicacion.editar(res, [
+        DUbicacion.editar(res, [
             tipo, nombre, descripcion, ubicacionID, req.params.id
         ]);
     },
 
     eliminar(req, res) {
-        Ubicacion.eliminar(res, req.params.id);
+        DUbicacion.eliminar(res, req.params.id);
     }
 }
 
-module.exports = { UbicacionController };
+module.exports = { NUbicacion };

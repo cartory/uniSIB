@@ -1,5 +1,5 @@
-const { Model } = require("./Model");
-const { db } = require("../database");
+const { Dato } = require("./Dato");
+const { db } = require("../Conexion");
 
 const table = "solicitud";
 const subTable = "presta";
@@ -17,7 +17,7 @@ const subCols = [
     "solicitudID"
 ]
 
-class Solicitud extends Model {
+class DSolicitud extends Dato {
     constructor() {
         super(table, cols);
     }
@@ -52,4 +52,4 @@ class Solicitud extends Model {
     }
 }
 
-module.exports = { Solicitud: new Solicitud() };
+module.exports = { DSolicitud: new DSolicitud() };
