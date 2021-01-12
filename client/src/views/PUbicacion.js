@@ -31,7 +31,7 @@ import {
     Delete as DeleteIcon,
 } from '@material-ui/icons'
 
-import Title from './Title';
+import Title from './utils/Title';
 
 const URL = "http://localhost:8080/api/ubicaciones";
 

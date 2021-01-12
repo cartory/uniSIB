@@ -1,7 +1,7 @@
 
 create table autor (
   id int AUTO_INCREMENT PRIMARY key,
-  nombre varchar(50) not null,
+  nombre varchar(30) not null,
   nacionalidad varchar(20),
   biografia text
 );
@@ -47,7 +47,8 @@ create table estudiante (
   cedula int not null,
   nombre varchar(50) not null,
   correo varchar(30),
-  registro int,
+  registro int not null,
+  sexo boolean not null
 );
 
 create table solicitud (
@@ -57,7 +58,7 @@ create table solicitud (
   cantidadDias int,
   estudianteID int,
 
-  foreign key (estudianteID) references persona(id)
+  foreign key (estudianteID) references estudiante(id)
 );
 
 create table presta (

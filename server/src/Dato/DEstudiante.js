@@ -1,12 +1,12 @@
 const { Dato } = require("./Dato");
 
-const table = "persona";
+const table = "estudiante";
 const cols = [
     "cedula",
     "nombre",
-    "correo",
     "registro",
-    "contrasenia"
+    "correo",
+    "sexo"
 ];
 
 class DEstudiante extends Dato {

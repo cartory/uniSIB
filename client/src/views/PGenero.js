@@ -23,7 +23,7 @@ import {
     Replay as ReplayIcon,
 } from '@material-ui/icons'
 
-import Title from './Title'
+import Title from './utils/Title'
 
 const useStyles = makeStyles((theme) => ({
     button: {

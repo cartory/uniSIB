@@ -1,12 +1,12 @@
 import clsx from 'clsx';
 import React from 'react';
 
-import { AutorView } from './AutorView';
-import { GeneroView } from './GeneroView';
-import { SolicitudView } from './SolicitudView';
-import { UbicacionView } from './UbicacionView';
+import { AutorView } from './PAutor';
+import { GeneroView } from './PGenero';
+import { SolicitudView } from './PSolicitud';
+import { UbicacionView } from './PUbicacion';
 
-import { useStyles } from './styles'
+import { useStyles } from './utils/styles'
 
 import {
     CssBaseline,

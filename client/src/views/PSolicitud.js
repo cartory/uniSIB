@@ -10,7 +10,7 @@ import {
     makeStyles,
 } from '@material-ui/core';
 
-import Title from './Title';
+import Title from './utils/Title';
 
 const url = "http://localhost:8080/api/solicitudes";
 
