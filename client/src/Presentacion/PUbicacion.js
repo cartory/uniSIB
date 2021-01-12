@@ -21,6 +21,7 @@ import {
     InputLabel,
 
     makeStyles,
+    FormControl,
 } from '@material-ui/core'
 
 import {
@@ -33,7 +34,7 @@ import {
 
 import Title from './utils/Title';
 
-const URL = "http://localhost:8080/api/ubicaciones";
+const URL = "http://localhost:8000/api/ubicaciones";
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -90,10 +91,8 @@ const DataTable = props => {
                             <TableCell>
                                 <Fab
                                     disabled
+                                    variant="extended"
                                     size="small"
-                                    variant="contained"
-                                    style={{
-                                    }}
                                 >{row.tipo}
                                 </Fab>
                             </TableCell>
@@ -103,7 +102,7 @@ const DataTable = props => {
                                 <Fab
                                     disabled
                                     size="small"
-                                    variant="contained"
+                                    variant="extended"
                                     style={{
                                     }}
                                 >{row.ubicacion ?? <RemoveIcon />}
@@ -169,7 +168,7 @@ const Form = props => {
 
     const onInput = target => {
         const { name, value } = target;
-        ubi[name] = value;
+        ubi[name] = value === 0 ? null : value;
         setUbi(ubi);
     }
 
@@ -204,32 +203,36 @@ const Form = props => {
                     />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <InputLabel htmlFor="max-width">Tipo Ubicación</InputLabel>
-                    <Select
-                        required
-                        fullWidth
-                        name="tipo"
-                        defaultValue=''
-                        onChange={event => onInput(event.target)}
-                    >
-                        {tipos.map(tipo => (
-                            <MenuItem key={tipo} alignItems="center" value={tipo}>{tipo}</MenuItem>
-                        ))}
-                    </Select>
+                    <InputLabel htmlFor="max-width">Tipo Ubi</InputLabel>
+                    <FormControl fullWidth>
+                        <Select
+                            required={!edit}
+                            fullWidth
+                            name="tipo"
+                            defaultValue={ubi["tipo"] ?? ""}
+                            onChange={event => onInput(event.target)}
+                        >
+                            {tipos.map(tipo => (
+                                <MenuItem key={tipo} alignItems="center" value={tipo}>{tipo}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <InputLabel htmlFor="max-width">Pertenece a</InputLabel>
-                    <Select
-                        fullWidth
-                        name="ubicacionID"
-                        defaultValue={ubi["id"] ?? ''}
-                        onChange={event => onInput(event.target)}
-                    >
-                        <MenuItem key={0} value={0}>Ninguna</MenuItem>
-                        {ubis.map(ubi => (
-                            <MenuItem key={ubi.id} value={ubi.id}>{ubi.nombre}</MenuItem>
-                        ))}
-                    </Select>
+                    <FormControl fullWidth>
+                        <Select
+                            fullWidth
+                            name="ubicacionID"
+                            defaultValue={ubi["tipo"] ?? "0"}
+                            onChange={event => onInput(event.target)}
+                        >
+                            <MenuItem key={0} value={0}>Ninguna</MenuItem>
+                            {ubis.map(ubi => (
+                                <MenuItem key={ubi.id} value={ubi.id}>{ubi.nombre}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                 </Grid>
                 <Grid item>
                     <Button
@@ -274,6 +277,7 @@ export const PUbicacion = props => {
 
     React.useEffect(() => {
         if (state) {
+            setUbi({});
             setState(false);
             fetch(URL)
                 .then(async res => setData(await res.json()))

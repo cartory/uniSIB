@@ -98,7 +98,7 @@ const DataTable = props => {
                                 <Fab
                                     disabled
                                     size="small"
-                                    variant="contained"
+                                    variant="round"
                                     style={{
                                         color: "black",
                                         backgroundColor: row.sexo ? "lightblue" : "lightpink"
