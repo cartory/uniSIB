@@ -258,7 +258,7 @@ const Form = props => {
     );
 }
 
-export const UbicacionView = props => {
+export const PUbicacion = props => {
     const classes = useStyles();
 
     const [ubi, setUbi] = React.useState({});

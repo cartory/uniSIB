@@ -1,10 +1,11 @@
 import clsx from 'clsx';
 import React from 'react';
 
-import { AutorView } from './PAutor';
-import { GeneroView } from './PGenero';
-import { SolicitudView } from './PSolicitud';
-import { UbicacionView } from './PUbicacion';
+import { PAutor } from './PAutor';
+import { PGenero } from './PGenero';
+import { PSolicitud } from './PSolicitud';
+import { PUbicacion } from './PUbicacion';
+import { PEstudiante } from './PEstudiante';
 
 import { useStyles } from './utils/styles'
 
@@ -26,7 +27,7 @@ import {
 
 import {
     Dashboard as DashboardIcon,
-    ShoppingCart as ShoppingCartIcon,
+    // ShoppingCart as ShoppingCartIcon,
     People as PeopleIcon,
     BarChart as BarChartIcon,
     Layers as LayersIcon,
@@ -34,19 +35,6 @@ import {
     ChevronLeft as ChevronLeftIcon,
     VerifiedUserSharp as VerifiedUserSharpIcon
 } from '@material-ui/icons'
-
-// function Copyright() {
-//     return (
-//         <Typography variant="body2" color="textSecondary" align="center">
-//             {'Copyright © '}
-//             <Link color="inherit" href="https://material-ui.com/">
-//                 Your Website
-//       </Link>{' '}
-//             {new Date().getFullYear()}
-//             {'.'}
-//         </Typography>
-//     );
-// }
 
 const MyAppBar = (props) => {
     const { open, classes, handleDrawerOpen } = props;
@@ -100,31 +88,37 @@ const MenuList = props => {
                 title="Inicio"
                 icon={<DashboardIcon />}
                 setChild={setChild}
-                child={<SolicitudView />}
+                child={<PSolicitud />}
             />
-            <IconItem
+            {/* <IconItem
                 icon={<ShoppingCartIcon />}
                 title="Solicitudes"
                 setChild={setChild}
-                child={(<SolicitudView />)}
-            />
+                child={<SolicitudView />}
+            /> */}
             <IconItem
                 title="Autores"
                 icon={<PeopleIcon />}
                 setChild={setChild}
-                child={<AutorView />}
+                child={<PAutor />}
             />
             <IconItem
                 title="Generos"
                 icon={<BarChartIcon />}
                 setChild={setChild}
-                child={<GeneroView />}
+                child={<PGenero />}
             />
             <IconItem
                 title="Ubicaciones"
                 icon={<LayersIcon />}
-                child={<UbicacionView />}
+                child={<PUbicacion />}
                 setChild={setChild}
+            />
+            <IconItem
+                title="Estudiantes"
+                icon={<PeopleIcon/>}
+                setChild={setChild}
+                child={<PEstudiante/>}
             />
         </div>
     );
@@ -171,7 +165,7 @@ export default function Dashboard() {
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     const [open, setOpen] = React.useState(false);
-    const [child, setChild] = React.useState(<AutorView />);
+    const [child, setChild] = React.useState(<PEstudiante />);
 
     const handleDrawerOpen = () => setOpen(true);
     const handleDrawerClose = () => setOpen(false);

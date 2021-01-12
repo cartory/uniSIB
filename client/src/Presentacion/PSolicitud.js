@@ -62,7 +62,7 @@ const DataTable = (props) => {
     );
 }
 
-export const SolicitudView = () => {
+export const PSolicitud = () => {
     const classes = useStyles();
     const [data, setData] = React.useState([]);
     const [reload, setReload] = React.useState(false);

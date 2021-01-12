@@ -6,8 +6,11 @@ import {
     Grid,
     Paper,
     Button,
+    Select,
     TextField,
     Typography,
+    InputLabel,
+    MenuItem,
 
     Table,
     TableRow,
@@ -16,6 +19,7 @@ import {
     TableBody,
 
     makeStyles,
+    FormControl,
 } from '@material-ui/core';
 
 import {
@@ -27,7 +31,7 @@ import {
 
 import Title from './utils/Title';
 
-const URL = "http://localhost:8080/api/autores";
+const URL = "http://localhost:8000/api/estudiantes";
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -60,8 +64,11 @@ const DataTable = props => {
             <TableHead>
                 <TableRow>
                     <TableCell size="small" ><strong>ID</strong></TableCell>
+                    <TableCell><strong>Cédula</strong></TableCell>
+                    <TableCell><strong>Registro</strong></TableCell>
                     <TableCell><strong>Nombre</strong></TableCell>
-                    <TableCell><strong>Nacionalidad</strong></TableCell>
+                    <TableCell><strong>Correo</strong></TableCell>
+                    <TableCell><strong>Sexo</strong></TableCell>
                     <TableCell size="small"><strong>Acción</strong></TableCell>
                 </TableRow>
             </TableHead>
@@ -83,15 +90,20 @@ const DataTable = props => {
                             }}
                         >
                             <TableCell size="small" ><strong>{row.id}</strong></TableCell>
+                            <TableCell>{row.cedula}</TableCell>
+                            <TableCell>{row.registro}</TableCell>
                             <TableCell>{row.nombre}</TableCell>
-                            <TableCell>
+                            <TableCell>{row.correo}</TableCell>
+                            <TableCell align="center" >
                                 <Fab
                                     disabled
                                     size="small"
                                     variant="contained"
                                     style={{
+                                        color: "black",
+                                        backgroundColor: row.sexo ? "lightblue" : "lightpink"
                                     }}
-                                >{row.nacionalidad}
+                                >{row.sexo ? "M" : "F"}
                                 </Fab>
                             </TableCell>
                             <TableCell align="center" size="small">
@@ -182,13 +194,52 @@ const Form = props => {
                 <Grid item xs={12} sm={12}>
                     <TextField
                         fullWidth
-                        required={!edit}
-                        name="nacionalidad"
-                        label="Nacionalidad"
-                        autoComplete="family-name"
-                        helperText={edit ? autor.nacionalidad : null}
+                        name="correo"
+                        label="Correo"
+                        autoComplete="given-name"
+                        helperText={edit ? autor.correo : null}
                         onInput={e => onInput(e.target)}
                     />
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                    <TextField
+                        fullWidth
+                        name="registro"
+                        type="number"
+                        label="registro"
+                        autoComplete="given-name"
+                        required={!edit}
+                        helperText={edit ? autor.registro : null}
+                        onInput={e => onInput(e.target)}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <FormControl>
+                        <TextField
+                            fullWidth
+                            type="number"
+                            required={!edit}
+                            name="cedula"
+                            label="Cédula"
+                            autoComplete="family-name"
+                            helperText={edit ? autor.cedula : null}
+                            onInput={event => onInput(event.target)}
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <InputLabel htmlFor="max-width">Sexo</InputLabel>
+                    <FormControl fullWidth>
+                        <Select
+                            required
+                            name="sexo"
+                            defaultValue={true}
+                            onChange={event => onInput(event.target)}
+                        >
+                            <MenuItem key={1} value={true}>M</MenuItem>
+                            <MenuItem key={0} value={false}>F</MenuItem>
+                        </Select>
+                    </FormControl>
                 </Grid>
                 <Grid item>
                     <Button
@@ -219,7 +270,7 @@ const Form = props => {
  * @param {*} props 
  */
 
-export const AutorView = props => {
+export const PEstudiante = props => {
     const classes = useStyles();
 
     const [data, setData] = React.useState([]);
@@ -246,7 +297,7 @@ export const AutorView = props => {
     return (
         <React.Fragment>
             <Typography variant="h4" gutterBottom color="primary">
-                <strong>GESTIONAR AUTOR</strong>
+                <strong>GESTIONAR ESTUDIANTE</strong>
             </Typography>
             <Grid
                 container
@@ -257,7 +308,7 @@ export const AutorView = props => {
                 <Grid item xs={12} sm={4}>
                     <Paper className={classes.paper}>
                         <Title>
-                            {edit ? "Editar " : "Crear "}Autor
+                            {edit ? "Editar " : "Crear "}Estudiante
                         </Title>
                         <Form
                             classes={classes}
@@ -270,7 +321,7 @@ export const AutorView = props => {
                 </Grid>
                 <Grid item xs={12} sm={8}>
                     <Paper className={classes.paper}>
-                        <Title>Ver Autores</Title>
+                        <Title>Ver Estudiantes</Title>
                         <DataTable
                             data={data}
                             setState={setState}

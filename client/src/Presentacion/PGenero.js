@@ -171,7 +171,7 @@ const DataTable = props => {
     );
 }
 
-export const GeneroView = () => {
+export const PGenero = () => {
     const classes = useStyles();
 
     const [data, setData] = React.useState([]);
