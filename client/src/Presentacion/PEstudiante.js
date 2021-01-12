@@ -146,20 +146,20 @@ const DataTable = props => {
 const Form = props => {
     const {
         classes,
-        edit = false, autor,
-        setAutor, setState, setEdit,
+        edit = false, estudiante,
+        setEstudiante, setState, setEdit,
     } = props;
 
     const onSubmit = event => {
         event.preventDefault();
 
-        fetch(`${URL}/${edit ? autor.id : ""}`, {
+        fetch(`${URL}/${edit ? estudiante.id : ""}`, {
             method: edit ? "PUT" : "POST",
             headers: {
                 "Accept": "Application/json",
                 "Content-Type": "Application/json"
             },
-            body: JSON.stringify(autor)
+            body: JSON.stringify(estudiante)
         })
             .then(_ => setState(true))
             .catch(err => console.error(err))
@@ -167,8 +167,8 @@ const Form = props => {
 
     const onInput = target => {
         const { name, value } = target;
-        autor[name] = value;
-        setAutor(autor);
+        estudiante[name] = value;
+        setEstudiante(estudiante);
     }
 
     return (
@@ -187,7 +187,7 @@ const Form = props => {
                         label="Nombre"
                         autoComplete="given-name"
                         required={!edit}
-                        helperText={edit ? autor.nombre : null}
+                        helperText={edit ? estudiante.nombre : null}
                         onInput={e => onInput(e.target)}
                     />
                 </Grid>
@@ -197,19 +197,19 @@ const Form = props => {
                         name="correo"
                         label="Correo"
                         autoComplete="given-name"
-                        helperText={edit ? autor.correo : null}
+                        helperText={edit ? estudiante.correo : null}
                         onInput={e => onInput(e.target)}
                     />
                 </Grid>
                 <Grid item xs={12} sm={12}>
                     <TextField
                         fullWidth
+                        required={!edit}
                         name="registro"
                         type="number"
                         label="registro"
                         autoComplete="given-name"
-                        required={!edit}
-                        helperText={edit ? autor.registro : null}
+                        helperText={edit ? estudiante.registro : null}
                         onInput={e => onInput(e.target)}
                     />
                 </Grid>
@@ -222,7 +222,7 @@ const Form = props => {
                             name="cedula"
                             label="Cédula"
                             autoComplete="family-name"
-                            helperText={edit ? autor.cedula : null}
+                            helperText={edit ? estudiante.cedula : null}
                             onInput={event => onInput(event.target)}
                         />
                     </FormControl>
@@ -231,10 +231,10 @@ const Form = props => {
                     <InputLabel htmlFor="max-width">Sexo</InputLabel>
                     <FormControl fullWidth>
                         <Select
-                            required
+                            required={!edit}
                             name="sexo"
-                            defaultValue={true}
                             onChange={event => onInput(event.target)}
+                            defaultValue=""
                         >
                             <MenuItem key={1} value={true}>M</MenuItem>
                             <MenuItem key={0} value={false}>F</MenuItem>
@@ -274,7 +274,7 @@ export const PEstudiante = props => {
     const classes = useStyles();
 
     const [data, setData] = React.useState([]);
-    const [autor, setAutor] = React.useState({});
+    const [estudiante, setEstudiante] = React.useState({});
 
     const [edit, setEdit] = React.useState(false);
     const [state, setState] = React.useState(true);
@@ -282,7 +282,7 @@ export const PEstudiante = props => {
 
     const editMode = row => {
         setEdit(true);
-        setAutor(row);
+        setEstudiante(row);
     }
 
     React.useEffect(() => {
@@ -312,9 +312,9 @@ export const PEstudiante = props => {
                         </Title>
                         <Form
                             classes={classes}
-                            edit={edit} autor={autor}
+                            edit={edit} estudiante={estudiante}
                             setEdit={setEdit}
-                            setAutor={setAutor}
+                            setEstudiante={setEstudiante}
                             setState={setState}
                         />
                     </Paper>

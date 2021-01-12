@@ -165,7 +165,7 @@ export default function Dashboard() {
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     const [open, setOpen] = React.useState(false);
-    const [child, setChild] = React.useState(<PUbicacion />);
+    const [child, setChild] = React.useState(<PGenero />);
 
     const handleDrawerOpen = () => setOpen(true);
     const handleDrawerClose = () => setOpen(false);
