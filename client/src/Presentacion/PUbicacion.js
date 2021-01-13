@@ -93,23 +93,36 @@ const DataTable = props => {
                                     disabled
                                     variant="extended"
                                     size="small"
+                                    style={{
+                                        color: "black"
+                                    }}
                                 >{row.tipo}
                                 </Fab>
                             </TableCell>
                             <TableCell align="center">{row.nombre}</TableCell>
                             <TableCell>{row.descripcion}</TableCell>
-                            <TableCell align="center">{
+                            <TableCell align="center">
                                 <Fab
                                     disabled
                                     size="small"
                                     variant="extended"
                                     style={{
+                                        color: "black"
                                     }}
                                 >{row.ubicacion ?? <RemoveIcon />}
                                 </Fab>
-                            }
                             </TableCell>
-                            <TableCell align="center">{row.ubicaciones}</TableCell>
+                            <TableCell align="center">
+                                <Fab
+                                    disabled
+                                    size="small"
+                                    variant="extended"
+                                    style={{
+                                        color: "black"
+                                    }}
+                                >{row.ubicaciones}
+                                </Fab>
+                            </TableCell>
                             <TableCell align="center" size="small">
                                 <Grid container direction="row">
                                     <Grid item title="edit">

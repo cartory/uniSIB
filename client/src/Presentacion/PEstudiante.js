@@ -161,7 +161,10 @@ const Form = props => {
             },
             body: JSON.stringify(estudiante)
         })
-            .then(_ => setState(true))
+            .then(async res => {
+                setState(true)
+                console.log(await res.json());
+            })
             .catch(err => console.error(err))
     }
 
@@ -197,7 +200,7 @@ const Form = props => {
                         name="correo"
                         label="Correo"
                         autoComplete="given-name"
-                        helperText={edit ? estudiante.correo : null}
+                        helperText={estudiante["correo"]}
                         onInput={e => onInput(e.target)}
                     />
                 </Grid>
@@ -209,7 +212,7 @@ const Form = props => {
                         type="number"
                         label="registro"
                         autoComplete="given-name"
-                        helperText={edit ? estudiante.registro : null}
+                        helperText={estudiante["registro"]}
                         onInput={e => onInput(e.target)}
                     />
                 </Grid>

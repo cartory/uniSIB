@@ -25,6 +25,13 @@ import {
 } from '@material-ui/core'
 
 import {
+    KeyboardDatePicker,
+    MuiPickersUtilsProvider,
+} from '@material-ui/pickers'
+
+import DateFnsUtils from '@date-io/date-fns'
+
+import {
     Save as SaveIcon,
     Edit as EditIcon,
     Remove as RemoveIcon,
@@ -35,6 +42,7 @@ import {
 import Title from './utils/Title';
 
 const URL = "http://localhost:8000/api/libros";
+const ROOT = "http://localhost:8000/api";
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -62,12 +70,11 @@ const DataTable = props => {
             <TableHead>
                 <TableRow>
                     <TableCell size="small"><strong>ID</strong></TableCell>
-                    <TableCell><strong>Tipo</strong></TableCell>
-                    <TableCell><strong>Nombre</strong></TableCell>
-                    <TableCell><strong>Descripción</strong></TableCell>
-                    <TableCell><strong>Ubi</strong></TableCell>
-                    <TableCell align="center"><strong>Ubis</strong></TableCell>
-                    <TableCell size="small"><strong>Acción</strong></TableCell>
+                    <TableCell><strong>Título</strong></TableCell>
+                    <TableCell><strong>Sinopsis</strong></TableCell>
+                    <TableCell><strong>Publicación</strong></TableCell>
+                    <TableCell align="center"><strong>Cantidad</strong></TableCell>
+                    <TableCell size="small" align="center"><strong>Acción</strong></TableCell>
                 </TableRow>
             </TableHead>
             <TableBody>
@@ -88,26 +95,21 @@ const DataTable = props => {
                             }}
                         >
                             <TableCell size="small"><strong>{row.id}</strong></TableCell>
-                            <TableCell>
-                                <Fab
-                                    disabled
-                                    variant="extended"
-                                    size="small"
-                                >{row.tipo}
-                                </Fab>
-                            </TableCell>
-                            <TableCell>{row.nombre}</TableCell>
-                            <TableCell>{row.descripcion}</TableCell>
-                            <TableCell>{
+                            <TableCell>{row.titulo}</TableCell>
+                            <TableCell>{row.sinopsis}</TableCell>
+                            <TableCell>{row.fechaPublicacion.split("T")[0]}</TableCell>
+                            <TableCell align="center">{
                                 <Fab
                                     disabled
                                     size="small"
                                     variant="extended"
-                                >{row.ubicacion ?? <RemoveIcon />}
+                                    style={{
+                                        color: "black"
+                                    }}
+                                >{row.cantidad ?? <RemoveIcon />}
                                 </Fab>
                             }
                             </TableCell>
-                            <TableCell align="center">{row.ubicaciones}</TableCell>
                             <TableCell align="center" size="small">
                                 <Grid container direction="row">
                                     <Grid item title="edit">
@@ -139,19 +141,35 @@ const DataTable = props => {
 }
 
 const Form = props => {
+    const [ubis, setUbis] = React.useState([]);
+    const [autores, setAutores] = React.useState([]);
+    const [generos, setGeneros] = React.useState([]);
+
+    const [selectedDate, setSelectedDate] = React.useState(new Date());
+
+    React.useEffect(() => {
+        fetch(`${ROOT}/ubicaciones`)
+            .then(async res => setUbis(await res.json()))
+            .catch(err => console.error(err));
+
+        fetch(`${ROOT}/autores`)
+            .then(async res => setAutores(await res.json()))
+            .catch(err => console.error(err));
+
+        fetch(`${ROOT}/generos`)
+            .then(async res => setGeneros(await res.json()))
+            .catch(err => console.error(err));
+    }, []);
+
     const {
         classes,
-        edit = false, ubi, ubis,
+        edit = false, ubi,
         setUbi, setState, setEdit
     } = props;
 
-    const tipos = [
-        "Universidad", "Facultad", "Sección", "Librero", "Estante"
-    ];
-
     const onSubmit = event => {
         event.preventDefault();
-
+        console.log(ubi);
         fetch(`${URL}/${edit ? ubi.id : ""}`, {
             method: edit ? "PUT" : "POST",
             headers: {
@@ -160,14 +178,18 @@ const Form = props => {
             },
             body: JSON.stringify(ubi)
         })
-            .then(_ => setState(true))
+            .then(async res => {
+                console.log(await res.json());
+                setState(true)
+            })
             .catch(err => console.error(err))
     }
 
     const onInput = target => {
         const { name, value } = target;
-        ubi[name] = value === 0 ? null : value;
+        ubi[name] = value;
         setUbi(ubi);
+        console.log(ubi);
     }
 
     return (
@@ -183,54 +205,109 @@ const Form = props => {
                     <TextField
                         fullWidth
                         required={!edit}
-                        name="nombre"
-                        label="Nombre"
+                        name="titulo"
+                        label="Titulo"
                         autoComplete="given-name"
-                        helperText={edit ? ubi.nombre : null}
-                        onInput={e => onInput(e.target)}
-                    />
-                </Grid>
-                <Grid item xs={12} sm={12}>
-                    <TextField
-                        fullWidth
-                        name="descripcion"
-                        label="Descripción"
-                        autoComplete="family-name"
-                        helperText={edit ? ubi.tipo : null}
+                        helperText={ubi["titulo"]}
                         onInput={e => onInput(e.target)}
                     />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <InputLabel htmlFor="max-width">Tipo Ubi</InputLabel>
+                    <InputLabel htmlFor="max-width">Publicación</InputLabel>
+                    <FormControl fullWidth>
+                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                            <KeyboardDatePicker
+                                required
+                                disableToolbar
+
+                                variant="inline"
+                                format="yyyy/MM/dd"
+                                name="fechaPublicacion"
+                                value={selectedDate}
+                                onChange={date => {
+                                    setSelectedDate(selectedDate);
+                                    ubi["fechaPublicacion"] = date.toISOString().split("T")[0];
+                                }}
+                                KeyboardButtonProps={{
+                                    'aria-label': 'change date',
+                                }}
+                            />
+                        </MuiPickersUtilsProvider>
+                    </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <InputLabel htmlFor="max-width">Cantidad</InputLabel>
+                    <FormControl fullWidth>
+                        <TextField
+                            fullWidth
+                            type="number"
+                            name="cantidad"
+                            required={!edit}
+                            autoComplete="given-name"
+                            helperText={ubi["cantidad"]}
+                            onInput={e => onInput(e.target)}
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <InputLabel htmlFor="max-width">Género</InputLabel>
                     <FormControl fullWidth>
                         <Select
                             required={!edit}
                             fullWidth
-                            name="tipo"
-                            defaultValue={ubi["tipo"] ?? ""}
+                            name="generoID"
+                            defaultValue={ubi["generoID"] ?? ""}
                             onChange={event => onInput(event.target)}
                         >
-                            {tipos.map(tipo => (
-                                <MenuItem key={tipo} alignItems="center" value={tipo}>{tipo}</MenuItem>
+                            {generos.map(genero => (
+                                <MenuItem key={genero.id} alignItems="center" value={genero.id}>{genero.nombre}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <InputLabel htmlFor="max-width">Pertenece a</InputLabel>
+                    <InputLabel htmlFor="max-width">Ubicación</InputLabel>
                     <FormControl fullWidth>
                         <Select
+                            required={!edit}
                             fullWidth
                             name="ubicacionID"
-                            defaultValue={ubi["tipo"] ?? "0"}
+                            defaultValue={ubi["ubicacionID"] ?? ""}
                             onChange={event => onInput(event.target)}
                         >
-                            <MenuItem key={0} value={0}>Ninguna</MenuItem>
                             {ubis.map(ubi => (
-                                <MenuItem key={ubi.id} value={ubi.id}>{ubi.nombre}</MenuItem>
+                                <MenuItem key={ubi.id} alignItems="center" value={ubi.id}>{ubi.nombre}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                    <InputLabel htmlFor="max-width">Autor</InputLabel>
+                    <FormControl fullWidth>
+                        <Select
+                            required={!edit}
+                            fullWidth
+                            name="autorID"
+                            defaultValue={ubi["autorID"] ?? ''}
+                            onChange={event => onInput(event.target)}
+                        >
+                            {autores.map(e => (
+                                <MenuItem key={e.id} alignItems="center" value={e.id}>{e.nombre}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                    <TextField
+                        fullWidth
+                        multiline
+                        margin="none"
+                        name="sinopsis"
+                        label="Sinopsis"
+                        autoComplete="family-name"
+                        helperText={ubi["sinopsis"]}
+                        onInput={e => onInput(e.target)}
+                    />
                 </Grid>
                 <Grid item>
                     <Button
@@ -262,7 +339,7 @@ const Form = props => {
 export const PLibro = props => {
     const classes = useStyles();
 
-    const [ubi, setUbi] = React.useState({});
+    const [libro, setLibro] = React.useState({});
     const [data, setData] = React.useState([]);
 
     const [edit, setEdit] = React.useState(false);
@@ -270,16 +347,19 @@ export const PLibro = props => {
 
     const editMode = row => {
         setEdit(true);
-        setUbi(row);
+        let date = row["fechaPublicacion"];
+        row["fechaPublicacion"] = date.split("T")[0];
+        setLibro(row);
+        console.log(row);
     }
 
     React.useEffect(() => {
         if (state) {
-            setUbi({});
+            setLibro({});
             setState(false);
             fetch(URL)
                 .then(async res => setData(await res.json()))
-                .catch(err => console.error(err))
+                .catch(err => console.error(err));
         }
     }, [state]);
 
@@ -301,11 +381,11 @@ export const PLibro = props => {
                         </Title>
                         <Form
                             classes={classes}
-                            edit={edit} ubi={ubi}
-                            setUbi={setUbi}
+                            edit={edit} ubi={libro}
+                            setUbi={setLibro}
                             setEdit={setEdit}
                             setState={setState}
-                            ubis={data.filter(row => ubi.id !== row.id)}
+                            ubis={data.filter(row => libro.id !== row.id)}
                         />
                     </Paper>
                 </Grid>

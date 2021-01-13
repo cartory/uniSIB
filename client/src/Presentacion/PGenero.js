@@ -89,16 +89,30 @@ const DataTable = props => {
                             <TableCell size="small"><strong>{row.id}</strong></TableCell>
                             <TableCell>{row.nombre}</TableCell>
                             <TableCell>{row.descripcion}</TableCell>
-                            <TableCell align="center">{
+                            <TableCell align="center">
                                 <Fab
                                     disabled
                                     size="small"
                                     variant="extended"
-                                >{row.genero ?? <RemoveIcon />}
+                                    style={{
+                                        color: "black"
+                                    }}
+                                >
+                                    {row.genero ?? <RemoveIcon />}
                                 </Fab>
-                            }
                             </TableCell>
-                            <TableCell align="center">{row.generos}</TableCell>
+                            <TableCell align="center">
+                                <Fab
+                                    disabled
+                                    size="small"
+                                    variant="extended"
+                                    style={{
+                                        color: "black"
+                                    }}
+                                >
+                                    {row.generos}
+                                </Fab>
+                            </TableCell>
                             <TableCell align="center" size="small">
                                 <Grid container direction="row">
                                     <Grid item title="edit">

@@ -92,6 +92,7 @@ const DataTable = props => {
                                     size="small"
                                     variant="extended"
                                     style={{
+                                        color: "black"
                                     }}
                                 >{row.nacionalidad}
                                 </Fab>

@@ -35,7 +35,6 @@ import {
     Menu as MenuIcon,
     ChevronLeft as ChevronLeftIcon,
     VerifiedUserSharp as VerifiedUserSharpIcon,
-    Layers
 } from '@material-ui/icons'
 
 const MyAppBar = (props) => {
