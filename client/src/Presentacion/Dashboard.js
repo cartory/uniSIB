@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import React from 'react';
 
 import { PAutor } from './PAutor';
+import { PLibro } from './PLibro';
 import { PGenero } from './PGenero';
 import { PSolicitud } from './PSolicitud';
 import { PUbicacion } from './PUbicacion';
@@ -33,7 +34,8 @@ import {
     Layers as LayersIcon,
     Menu as MenuIcon,
     ChevronLeft as ChevronLeftIcon,
-    VerifiedUserSharp as VerifiedUserSharpIcon
+    VerifiedUserSharp as VerifiedUserSharpIcon,
+    Layers
 } from '@material-ui/icons'
 
 const MyAppBar = (props) => {
@@ -90,12 +92,12 @@ const MenuList = props => {
                 setChild={setChild}
                 child={<PSolicitud />}
             />
-            {/* <IconItem
-                icon={<ShoppingCartIcon />}
+            <IconItem
+                icon={<LayersIcon />}
                 title="Solicitudes"
                 setChild={setChild}
-                child={<SolicitudView />}
-            /> */}
+                child={<PLibro />}
+            />
             <IconItem
                 title="Autores"
                 icon={<PeopleIcon />}
@@ -116,9 +118,9 @@ const MenuList = props => {
             />
             <IconItem
                 title="Estudiantes"
-                icon={<PeopleIcon/>}
+                icon={<PeopleIcon />}
                 setChild={setChild}
-                child={<PEstudiante/>}
+                child={<PEstudiante />}
             />
         </div>
     );
@@ -165,7 +167,7 @@ export default function Dashboard() {
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     const [open, setOpen] = React.useState(false);
-    const [child, setChild] = React.useState(<PGenero />);
+    const [child, setChild] = React.useState(<PLibro />);
 
     const handleDrawerOpen = () => setOpen(true);
     const handleDrawerClose = () => setOpen(false);

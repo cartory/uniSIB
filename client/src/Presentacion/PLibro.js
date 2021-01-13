@@ -34,7 +34,7 @@ import {
 
 import Title from './utils/Title';
 
-const URL = "http://localhost:8000/api/generos";
+const URL = "http://localhost:8000/api/libros";
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -62,10 +62,11 @@ const DataTable = props => {
             <TableHead>
                 <TableRow>
                     <TableCell size="small"><strong>ID</strong></TableCell>
+                    <TableCell><strong>Tipo</strong></TableCell>
                     <TableCell><strong>Nombre</strong></TableCell>
                     <TableCell><strong>Descripción</strong></TableCell>
-                    <TableCell align="center"><strong>SubGénero</strong></TableCell>
-                    <TableCell align="center"><strong>SubGéneros</strong></TableCell>
+                    <TableCell><strong>Ubi</strong></TableCell>
+                    <TableCell align="center"><strong>Ubis</strong></TableCell>
                     <TableCell size="small"><strong>Acción</strong></TableCell>
                 </TableRow>
             </TableHead>
@@ -87,18 +88,26 @@ const DataTable = props => {
                             }}
                         >
                             <TableCell size="small"><strong>{row.id}</strong></TableCell>
+                            <TableCell>
+                                <Fab
+                                    disabled
+                                    variant="extended"
+                                    size="small"
+                                >{row.tipo}
+                                </Fab>
+                            </TableCell>
                             <TableCell>{row.nombre}</TableCell>
                             <TableCell>{row.descripcion}</TableCell>
-                            <TableCell align="center">{
+                            <TableCell>{
                                 <Fab
                                     disabled
                                     size="small"
                                     variant="extended"
-                                >{row.genero ?? <RemoveIcon />}
+                                >{row.ubicacion ?? <RemoveIcon />}
                                 </Fab>
                             }
                             </TableCell>
-                            <TableCell align="center">{row.generos}</TableCell>
+                            <TableCell align="center">{row.ubicaciones}</TableCell>
                             <TableCell align="center" size="small">
                                 <Grid container direction="row">
                                     <Grid item title="edit">
@@ -132,20 +141,24 @@ const DataTable = props => {
 const Form = props => {
     const {
         classes,
-        edit = false, genero, generos,
-        setGenero, setState, setEdit
+        edit = false, ubi, ubis,
+        setUbi, setState, setEdit
     } = props;
+
+    const tipos = [
+        "Universidad", "Facultad", "Sección", "Librero", "Estante"
+    ];
 
     const onSubmit = event => {
         event.preventDefault();
 
-        fetch(`${URL}/${edit ? genero.id : ""}`, {
+        fetch(`${URL}/${edit ? ubi.id : ""}`, {
             method: edit ? "PUT" : "POST",
             headers: {
                 "Accept": "Application/json",
                 "Content-Type": "Application/json",
             },
-            body: JSON.stringify(genero)
+            body: JSON.stringify(ubi)
         })
             .then(_ => setState(true))
             .catch(err => console.error(err))
@@ -153,8 +166,8 @@ const Form = props => {
 
     const onInput = target => {
         const { name, value } = target;
-        genero[name] = value === 0 ? null : value;
-        setGenero(genero);
+        ubi[name] = value === 0 ? null : value;
+        setUbi(ubi);
     }
 
     return (
@@ -173,33 +186,48 @@ const Form = props => {
                         name="nombre"
                         label="Nombre"
                         autoComplete="given-name"
-                        helperText={genero["nombre"]}
+                        helperText={edit ? ubi.nombre : null}
                         onInput={e => onInput(e.target)}
                     />
                 </Grid>
                 <Grid item xs={12} sm={12}>
                     <TextField
                         fullWidth
-                        multiline
                         name="descripcion"
                         label="Descripción"
                         autoComplete="family-name"
-                        helperText={genero["tipo"]}
+                        helperText={edit ? ubi.tipo : null}
                         onInput={e => onInput(e.target)}
                     />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <InputLabel htmlFor="max-width">SubGénero</InputLabel>
+                    <InputLabel htmlFor="max-width">Tipo Ubi</InputLabel>
+                    <FormControl fullWidth>
+                        <Select
+                            required={!edit}
+                            fullWidth
+                            name="tipo"
+                            defaultValue={ubi["tipo"] ?? ""}
+                            onChange={event => onInput(event.target)}
+                        >
+                            {tipos.map(tipo => (
+                                <MenuItem key={tipo} alignItems="center" value={tipo}>{tipo}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                    <InputLabel htmlFor="max-width">Pertenece a</InputLabel>
                     <FormControl fullWidth>
                         <Select
                             fullWidth
-                            name="generoID"
-                            defaultValue={genero["generoID"] ?? "0"}
+                            name="ubicacionID"
+                            defaultValue={ubi["tipo"] ?? "0"}
                             onChange={event => onInput(event.target)}
                         >
                             <MenuItem key={0} value={0}>Ninguna</MenuItem>
-                            {generos.map(genero => (
-                                <MenuItem key={genero.id} value={genero.id}>{genero.nombre}</MenuItem>
+                            {ubis.map(ubi => (
+                                <MenuItem key={ubi.id} value={ubi.id}>{ubi.nombre}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
@@ -218,8 +246,7 @@ const Form = props => {
                         type="reset"
                         variant="contained"
                         onClick={() => {
-                            setGenero({})
-                            delete genero.id
+                            delete ubi.id
                             setEdit(false)
                         }}
                         size="small"
@@ -232,10 +259,10 @@ const Form = props => {
     );
 }
 
-export const PGenero = props => {
+export const PLibro = props => {
     const classes = useStyles();
 
-    const [genero, setGenero] = React.useState({});
+    const [ubi, setUbi] = React.useState({});
     const [data, setData] = React.useState([]);
 
     const [edit, setEdit] = React.useState(false);
@@ -243,12 +270,12 @@ export const PGenero = props => {
 
     const editMode = row => {
         setEdit(true);
-        setGenero(row);
+        setUbi(row);
     }
 
     React.useEffect(() => {
         if (state) {
-            setGenero({});
+            setUbi({});
             setState(false);
             fetch(URL)
                 .then(async res => setData(await res.json()))
@@ -259,7 +286,7 @@ export const PGenero = props => {
     return (
         <React.Fragment>
             <Typography variant="h4" gutterBottom color="primary">
-                <strong>GESTIONAR GÉNERO</strong>
+                <strong>GESTIONAR LIBRO</strong>
             </Typography>
             <Grid
                 container
@@ -270,21 +297,21 @@ export const PGenero = props => {
                 <Grid item xs={12} sm={4}>
                     <Paper className={classes.paper}>
                         <Title>
-                            {edit ? "Editar " : "Crear "}Género
+                            {edit ? "Editar " : "Crear "}Libro
                         </Title>
                         <Form
                             classes={classes}
-                            edit={edit} genero={genero}
-                            setGenero={setGenero}
+                            edit={edit} ubi={ubi}
+                            setUbi={setUbi}
                             setEdit={setEdit}
                             setState={setState}
-                            generos={data.filter(row => genero.id !== row.id)}
+                            ubis={data.filter(row => ubi.id !== row.id)}
                         />
                     </Paper>
                 </Grid>
                 <Grid item xs={12} sm={8}>
                     <Paper className={classes.paper}>
-                        <Title>Ver Género</Title>
+                        <Title>Ver Libros</Title>
                         <DataTable
                             data={data}
                             setState={setState}

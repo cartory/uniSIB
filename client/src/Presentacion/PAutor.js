@@ -27,7 +27,7 @@ import {
 
 import Title from './utils/Title';
 
-const URL = "http://localhost:8080/api/autores";
+const URL = "http://localhost:8000/api/autores";
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -61,6 +61,7 @@ const DataTable = props => {
                 <TableRow>
                     <TableCell size="small" ><strong>ID</strong></TableCell>
                     <TableCell><strong>Nombre</strong></TableCell>
+                    <TableCell><strong>Biografía</strong></TableCell>
                     <TableCell><strong>Nacionalidad</strong></TableCell>
                     <TableCell size="small"><strong>Acción</strong></TableCell>
                 </TableRow>
@@ -84,11 +85,12 @@ const DataTable = props => {
                         >
                             <TableCell size="small" ><strong>{row.id}</strong></TableCell>
                             <TableCell>{row.nombre}</TableCell>
+                            <TableCell>{row.biografia}</TableCell>
                             <TableCell>
                                 <Fab
                                     disabled
                                     size="small"
-                                    variant="contained"
+                                    variant="extended"
                                     style={{
                                     }}
                                 >{row.nacionalidad}
@@ -175,7 +177,7 @@ const Form = props => {
                         label="Nombre"
                         autoComplete="given-name"
                         required={!edit}
-                        helperText={edit ? autor.nombre : null}
+                        helperText={autor["nombre"]}
                         onInput={e => onInput(e.target)}
                     />
                 </Grid>
@@ -186,7 +188,18 @@ const Form = props => {
                         name="nacionalidad"
                         label="Nacionalidad"
                         autoComplete="family-name"
-                        helperText={edit ? autor.nacionalidad : null}
+                        helperText={autor["nacionalidad"]}
+                        onInput={e => onInput(e.target)}
+                    />
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                    <TextField
+                        fullWidth
+                        multiline
+                        name="biografia"
+                        label="biografia"
+                        autoComplete="family-name"
+                        helperText={autor["biografia"]}
                         onInput={e => onInput(e.target)}
                     />
                 </Grid>
@@ -203,7 +216,10 @@ const Form = props => {
                     <Button
                         type="reset"
                         variant="contained"
-                        onClick={() => setEdit(false)}
+                        onClick={() => {
+                            setAutor({})
+                            setEdit(false)
+                        }}
                         size="small"
                         className={classes.button}
                         startIcon={< ReplayIcon />}

@@ -62,10 +62,10 @@ const DataTable = props => {
             <TableHead>
                 <TableRow>
                     <TableCell size="small"><strong>ID</strong></TableCell>
-                    <TableCell><strong>Tipo</strong></TableCell>
+                    <TableCell align="center"><strong>Tipo</strong></TableCell>
                     <TableCell><strong>Nombre</strong></TableCell>
                     <TableCell><strong>Descripción</strong></TableCell>
-                    <TableCell><strong>Ubi</strong></TableCell>
+                    <TableCell align="center"><strong>Ubi</strong></TableCell>
                     <TableCell align="center"><strong>Ubis</strong></TableCell>
                     <TableCell size="small"><strong>Acción</strong></TableCell>
                 </TableRow>
@@ -88,7 +88,7 @@ const DataTable = props => {
                             }}
                         >
                             <TableCell size="small"><strong>{row.id}</strong></TableCell>
-                            <TableCell>
+                            <TableCell align="center">
                                 <Fab
                                     disabled
                                     variant="extended"
@@ -96,9 +96,9 @@ const DataTable = props => {
                                 >{row.tipo}
                                 </Fab>
                             </TableCell>
-                            <TableCell>{row.nombre}</TableCell>
+                            <TableCell align="center">{row.nombre}</TableCell>
                             <TableCell>{row.descripcion}</TableCell>
-                            <TableCell>{
+                            <TableCell align="center">{
                                 <Fab
                                     disabled
                                     size="small"
@@ -195,6 +195,7 @@ const Form = props => {
                 <Grid item xs={12} sm={12}>
                     <TextField
                         fullWidth
+                        multiline
                         name="descripcion"
                         label="Descripción"
                         autoComplete="family-name"
@@ -306,7 +307,6 @@ export const PUbicacion = props => {
                             edit={edit} ubi={ubi}
                             setUbi={setUbi}
                             setEdit={setEdit}
-                            setAutor={setUbi}
                             setState={setState}
                             ubis={data.filter(row => ubi.id !== row.id)}
                         />
