@@ -1,8 +1,8 @@
 const { Dato } = require("./Dato");
-const { db } = require("../Conexion");
+const { DLibro } = require("./DLibro");
 
 const table = "solicitud";
-const subTable = "presta";
+const table2 = "presta";
 
 const cols = [
     "estado",
@@ -12,44 +12,44 @@ const cols = [
     "estudianteID",
 ];
 
-const subCols = [
+const cols2 = [
     "libroID",
     "solicitudID"
 ]
+
+class DPresta extends Dato {
+    constructor() {
+        super(table2, cols2);
+    }
+}
 
 class DSolicitud extends Dato {
     constructor() {
         super(table, cols);
     }
 
-    verSolicitudes(res) {
+    verSolicitudes() {
         const sql = `
-            SELECT presta.libroID, presta.solicitudID,
-                   p.nombre, p.registro, s.fechaSolicitud, 
-                   l.nombre AS nombreLibro, l.imagen AS imagenLibro, s.cantidadDias, s.estado 
-            FROM persona AS p, libro AS l, solicitud AS s, presta
-            WHERE l.id = presta.libroID and presta.solicitudID = s.id and s.estudianteID = p.id;
+            SELECT DISTINCT
+                e.id, e.registro, e.nombre as estudiante,
+                s.fechaSolicitud, s.estado,
+                (
+                    SELECT count(*)
+                    FROM    libro, solicitud, presta, estudiante
+                    WHERE   libro.id = presta.libroID 
+                    AND     presta.solicitudID = solicitud.id
+                    AND     solicitud.estudianteID = estudiante.id
+                    AND     estudiante.id =  e.id
+                ) as libros
+            FROM estudiante e, solicitud s, libro l, presta p
+            WHERE   l.id = p.libroID    and     p.solicitudID = s.id    
+            AND     s.estudianteID = e.id
         `;
-        db.query(sql, (err, rows) => res.json(err ? err : rows));
-    }
-
-    crear(res, values, libroID) {
-        const map = cols.map(_ => "?");
-        const sql = `INSERT INTO ${table} (${cols}) VALUES (${map})`;
-
-        db.query(sql, values, (err, rows) => {
-            if (err) return res.json(err);
-
-            const subMap = subCols.map(_ => "?");
-            const sql2 = `INSERT INTO ${subTable} (${subCols}) VALUES (${subMap})`;
-
-            db.query(sql2, [
-                libroID, rows.insertId
-            ], (err, rows) => {
-                res.json(err ? err : rows)
-            });
-        });
+        return this.query(sql);
     }
 }
 
-module.exports = { DSolicitud: new DSolicitud() };
+module.exports = { 
+    DPresta: new DPresta(),
+    DSolicitud: new DSolicitud(),
+};

@@ -1,28 +1,35 @@
 const { DUbicacion } = require("../Dato/DUbicacion");
 
 const NUbicacion = {
-    listar(_, res) {
-        DUbicacion.listar(res);
+    async listar(_, res) {
+        res.json(await DUbicacion.listar());
     },
 
-    crear(req, res) {
+    async crear(req, res) {
         const { tipo, nombre, descripcion, ubicacionID } = req.body;
-        DUbicacion.crear(res, [
+        
+        res.json(await DUbicacion.crear([
             tipo, nombre, descripcion, ubicacionID
-        ]);
+        ]));
     },
 
-    editar(req, res) {
+    async editar(req, res) {
         const {
             tipo, nombre, descripcion, ubicacionID
         } = req.body;
-        DUbicacion.editar(res, [
-            tipo, nombre, descripcion, ubicacionID, req.params.id
-        ]);
+
+        try {
+            res.json(await DUbicacion.editar([
+                tipo, nombre, descripcion, ubicacionID, req.params.id
+
+            ]));
+        } catch (err) {
+            res.json(err);
+        }
     },
 
-    eliminar(req, res) {
-        DUbicacion.eliminar(res, req.params.id);
+    async eliminar(req, res) {
+        res.json(await DUbicacion.eliminar(req.params.id));
     }
 }
 

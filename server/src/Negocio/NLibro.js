@@ -1,36 +1,36 @@
 const { DLibro } = require("../Dato/DLibro");
 
 const NLibro = {
-    listar(_, res) {
-        DLibro.listar(res);
+    async listar(_, res) {
+        res.json(await DLibro.listar());
     },
 
-    crear(req, res) {
+    async crear(req, res) {
         const {
             titulo, sinopsis, fechaPublicacion, cantidad, estado,
             autorID, generoID, ubicacionID
         } = req.body;
 
-        DLibro.crear(res, [
+        res.json(await DLibro.crear([
             titulo, sinopsis, fechaPublicacion, cantidad, estado,
             autorID, generoID, ubicacionID
-        ]);
+        ]));
     },
 
-    editar(req, res) {
+    async editar(req, res) {
         const {
             titulo, sinopsis, fechaPublicacion, cantidad, estado,
             autorID, generoID, ubicacionID
         } = req.body;
 
-        DLibro.editar(res, [
+        res.json(await DLibro.editar([
             titulo, sinopsis, fechaPublicacion, cantidad, estado, 
             autorID, generoID, ubicacionID, req.params.id
-        ]);
+        ]));
     },
 
-    eliminar(req, res) {
-        DLibro.eliminar(res, req.params.id);
+    async eliminar(req, res) {
+        res.json(await DLibro.eliminar(req.params.id));
     }
 };
 

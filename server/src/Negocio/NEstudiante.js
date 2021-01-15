@@ -1,32 +1,32 @@
 const { DEstudiante } = require("../Dato/DEstudiante");
 
 const NEstudiante = {
-    listar(_, res){
-        DEstudiante.listar(res)
+    async listar(_, res) {
+        res.json(await DEstudiante.listar());
     },
 
-    crear(req, res) {
+    async crear(req, res) {
         const {
             cedula, nombre, registro, correo, sexo
         } = req.body;
 
-        DEstudiante.crear(res, [
+        res.json(await DEstudiante.crear([
             cedula, nombre, registro, correo, sexo
-        ]);
+        ]));
     },
 
-    editar(req, res) {
+    async editar(req, res) {
         const {
             cedula, nombre, registro, correo, sexo
         } = req.body;
-
-        DEstudiante.editar(res, [
+        
+        res.json(await DEstudiante.editar([
             cedula, nombre, registro, correo, sexo, req.params.id
-        ]);
+        ]));
     },
 
-    eliminar(req, res) {
-        DEstudiante.eliminar(res, req.params.id);
+    async eliminar(req, res) {
+        res.json(await DEstudiante.eliminar(req.params.id));
     }
 };
 

@@ -1,26 +1,32 @@
 const { DGenero } = require("../Dato/DGenero");
 
 const NGenero = {
-    listar(_, res) {
-        DGenero.listar(res);
+    async listar(_, res) {
+        res.json(await DGenero.listar());
     },
 
-    crear(req, res) {
+    async crear(req, res) {
         const { nombre, descripcion, generoID } = req.body;
-        DGenero.crear(res, [
+
+        res.json(await DGenero.crear([
             nombre, descripcion, generoID
-        ]);
+        ]));
     },
 
-    editar(req, res) {
-        const { nombre, descripcion, generoID} = req.body;
-        DGenero.editar(res, [
-            nombre, descripcion, generoID, req.params.id
-        ]);
+    async editar(req, res) {
+        const { nombre, descripcion, generoID = null } = req.body;
+        try {
+            res.json(await DGenero.editar([
+                nombre, descripcion, generoID, req.params.id
+            ]));
+        } catch (err) {
+            console.log(err);
+            res.json(err);
+        }
     },
 
-    eliminar(req, res) {
-        DGenero.eliminar(res, req.params.id);
+    async eliminar(req, res) {
+        res.json(await DGenero.eliminar(req.params.id));
     }
 };
 

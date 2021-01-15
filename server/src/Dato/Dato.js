@@ -6,25 +6,54 @@ class Dato {
         this.table = table;
     }
 
-    listar(res) {
+    listar() {
         const sql = `SELECT * FROM ${this.table}`;
-        db.query(sql, (err, rows) => res.json(err ? err : rows));
+        return new Promise((resolve, reject) => {
+            db.query(sql, (err, rows) => {
+                if (err) reject(err);
+                resolve(rows);
+            });
+        });
     }
 
-    crear(res, values) {
+    crear(values) {
         const map = this.cols.map(_ => "?");
         const sql = `INSERT INTO ${this.table} (${this.cols}) VALUES (${map})`;
-        db.query(sql, values, (err, rows) => res.json(err ? err : rows));
+        return new Promise((resolve, reject) => {
+            db.query(sql, values, (err, rows) => {
+                if (err) reject(err);
+                resolve(rows);
+            })
+        });
     }
 
-    editar(res, values) {
+    editar(values) {
         const sql = `UPDATE ${this.table} SET ${this.cols.join(" = ?, ")} = ? WHERE id = ?`;
-        db.query(sql, values, (err, rows) => res.json(err ? err : rows));
+        return new Promise((resolve, reject) => {
+            db.query(sql, values, (err, rows) => {
+                if (err) reject(err);
+                resolve(rows);
+            })
+        });
     }
 
-    eliminar(res, id) {
+    eliminar(id) {
         const sql = `DELETE FROM ${this.table} WHERE id = ${id}`;
-        db.query(sql, (err, rows) => res.json(err ? err : rows));
+        return new Promise((resolve, reject) => {
+            db.query(sql, (err, rows) => {
+                if (err) reject(err);
+                resolve(rows);
+            });
+        });
+    }
+
+    query(sql) {
+        return new Promise((resolve, reject) => {
+            db.query(sql, (err, rows) => {
+                if (err) reject(err);
+                resolve(rows);
+            });
+        });
     }
 }
 

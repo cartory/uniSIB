@@ -1,5 +1,4 @@
 const { Dato } = require("./Dato");
-const { db } = require("../Conexion");
 
 const table = "genero";
 const cols = [
@@ -13,15 +12,15 @@ class DGenero extends Dato {
         super(table, cols);
     }
 
-    listar(res) {
+    listar() {
         const sql = `
             select
                 u.*,
                 (select count(*) from genero v where u.id = v.generoID) as generos,
-                (select w.nombre from genero w where w.id = u.generoID) as generos
+                (select w.nombre from genero w where w.id = u.generoID) as genero
             from genero u;
         `;
-        db.query(sql, (err, rows) => res.json(err ? err : rows));
+        return this.query(sql);
     }
 }
 
