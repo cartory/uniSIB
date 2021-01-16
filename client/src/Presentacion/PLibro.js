@@ -74,6 +74,9 @@ const DataTable = props => {
                     <TableCell><strong>Sinopsis</strong></TableCell>
                     <TableCell><strong>Publicación</strong></TableCell>
                     <TableCell align="center"><strong>Cantidad</strong></TableCell>
+                    <TableCell align="center"><strong>Género</strong></TableCell>
+                    <TableCell align="center"><strong>Autor</strong></TableCell>
+                    <TableCell align="center"><strong>Ubi</strong></TableCell>
                     <TableCell size="small" align="center"><strong>Acción</strong></TableCell>
                 </TableRow>
             </TableHead>
@@ -110,6 +113,9 @@ const DataTable = props => {
                                 </Fab>
                             }
                             </TableCell>
+                            <TableCell align="center">{row.genero}</TableCell>
+                            <TableCell align="center">{row.autor}</TableCell>
+                            <TableCell align="center">{row.ubi}</TableCell>
                             <TableCell align="center" size="small">
                                 <Grid container direction="row">
                                     <Grid item title="edit">

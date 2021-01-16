@@ -36,6 +36,7 @@ router
     .get("/solicitudes", NSolicitud.listar)
     .post("/solicitudes", NSolicitud.crear)
     .put("/solicitudes/:id", NSolicitud.editar)
+    .post("/solicitudes/estado", NSolicitud.cambiarEstado)
     //  ESTUDIANTE
     .get("/estudiantes", NEstudiante.listar)
     .post("/estudiantes", NEstudiante.crear)

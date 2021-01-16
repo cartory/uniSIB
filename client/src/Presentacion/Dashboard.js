@@ -11,19 +11,19 @@ import { PEstudiante } from './PEstudiante';
 import { useStyles } from './utils/styles'
 
 import {
-    CssBaseline,
+    List,
     Drawer,
     AppBar,
     Toolbar,
-    List,
-    Typography,
     Divider,
-    IconButton,
     Container,
+    IconButton,
+    Typography,
+    CssBaseline,
     // Link,
     ListItem,
-    ListItemText,
     ListItemIcon,
+    ListItemText,
 } from '@material-ui/core'
 
 import {
@@ -166,7 +166,7 @@ export default function Dashboard() {
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     const [open, setOpen] = React.useState(false);
-    const [child, setChild] = React.useState(<PLibro />);
+    const [child, setChild] = React.useState(<PSolicitud />);
 
     const handleDrawerOpen = () => setOpen(true);
     const handleDrawerClose = () => setOpen(false);

@@ -28,11 +28,11 @@ class DSolicitud extends Dato {
         super(table, cols);
     }
 
-    verSolicitudes() {
+    async verSolicitudes() {
         const sql = `
             SELECT DISTINCT
-                e.id, e.registro, e.nombre as estudiante,
-                s.fechaSolicitud, s.estado,
+                e.id, e.registro, e.nombre as estudiante, e.id as estudianteID,
+                s.*,
                 (
                     SELECT count(*)
                     FROM    libro, solicitud, presta, estudiante
@@ -45,11 +45,26 @@ class DSolicitud extends Dato {
             WHERE   l.id = p.libroID    and     p.solicitudID = s.id    
             AND     s.estudianteID = e.id
         `;
-        return this.query(sql);
+
+        const rows = await this.query(sql);
+
+        for (let index = 0; index < rows.length; index++) {
+            const row = rows[index];
+            let libros = await DLibro.listarPorEstudiante(row.estudianteID);
+            row["librosID"] = libros.map(libro => libro.id);
+            rows[index] = row;
+        }
+        return rows;
+    }
+
+    async cambiarEstado(estado, id) {
+        const sql = `UPDATE ${table} SET estado = '${estado}' WHERE id = ${id}`;
+        console.log(sql);
+        return await this.query(sql);
     }
 }
 
-module.exports = { 
+module.exports = {
     DPresta: new DPresta(),
     DSolicitud: new DSolicitud(),
 };

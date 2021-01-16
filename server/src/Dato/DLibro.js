@@ -25,6 +25,7 @@ class DLibro extends Dato {
             join autor v on u.autorID = v.id 
             join genero w on u.generoID = w.id 
             join ubicacion t on u.ubicacionID = t.id
+            where u.cantidad > 0
         `;
         return this.query(sql);
     }
@@ -40,6 +41,15 @@ class DLibro extends Dato {
             AND presta.solicitudID = s.id
             AND s.estudianteID = e.id
             AND e.id = ${estudianteID}
+        `;
+        return await this.query(sql);
+    }
+
+    async actualizarCantidad(id) {
+        const sql = `
+            UPDATE ${table} SET cantidad = cantidad -1
+            WHERE   cantidad > 0 
+            AND     id = ${id}
         `;
         return await this.query(sql);
     }

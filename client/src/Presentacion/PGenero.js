@@ -64,7 +64,7 @@ const DataTable = props => {
                     <TableCell size="small"><strong>ID</strong></TableCell>
                     <TableCell><strong>Nombre</strong></TableCell>
                     <TableCell><strong>Descripción</strong></TableCell>
-                    <TableCell align="center"><strong>SubGénero</strong></TableCell>
+                    <TableCell align="center"><strong>SGénero</strong></TableCell>
                     <TableCell align="center"><strong>SubGéneros</strong></TableCell>
                     <TableCell size="small"><strong>Acción</strong></TableCell>
                 </TableRow>
@@ -153,6 +153,7 @@ const Form = props => {
     const onSubmit = event => {
         event.preventDefault();
 
+        console.log(genero);
         fetch(`${URL}/${edit ? genero.id : ""}`, {
             method: edit ? "PUT" : "POST",
             headers: {
@@ -233,7 +234,6 @@ const Form = props => {
                         variant="contained"
                         onClick={() => {
                             setGenero({})
-                            delete genero.id
                             setEdit(false)
                         }}
                         size="small"
@@ -262,7 +262,6 @@ export const PGenero = props => {
 
     React.useEffect(() => {
         if (state) {
-            setGenero({});
             setState(false);
             fetch(URL)
                 .then(async res => setData(await res.json()))

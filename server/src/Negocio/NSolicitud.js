@@ -1,4 +1,5 @@
 const { DSolicitud, DPresta } = require("../Dato/DSolicitud");
+const { DLibro } = require("../Dato/DLibro");
 
 const NSolicitud = {
     async listar(_, res) {
@@ -17,8 +18,9 @@ const NSolicitud = {
             ]);
 
             librosID.forEach(async libroID => {
+                await DLibro.actualizarCantidad(libroID);
                 await DPresta.crear([
-                    libroID, row.insertID
+                    libroID, row.insertId
                 ]);
             });
             res.json(row);
@@ -28,15 +30,21 @@ const NSolicitud = {
         }
     },
 
-    editar(req, res) {
+    async editar(req, res) {
         const {
             estado, fechaSolicitud, cantidadDias, libroID, estudianteID
         } = req.body;
 
-        DSolicitud.editar(res, [
+        res.json(await DSolicitud.editar([
             estado, fechaSolicitud, cantidadDias,
             libroID, estudianteID, req.params.id
-        ]);
+        ]));  
+    },
+
+    async cambiarEstado(req, res) {
+        const { id, estado } = req.body;
+        console.log(req.body);
+        res.json(await DSolicitud.cambiarEstado(estado, id));
     }
 };
 

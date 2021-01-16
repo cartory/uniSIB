@@ -166,7 +166,7 @@ const Form = props => {
 
     const onSubmit = event => {
         event.preventDefault();
-
+        console.log(ubi);
         fetch(`${URL}/${edit ? ubi.id : ""}`, {
             method: edit ? "PUT" : "POST",
             headers: {
@@ -175,7 +175,10 @@ const Form = props => {
             },
             body: JSON.stringify(ubi)
         })
-            .then(_ => setState(true))
+            .then(async res => {
+                setState(true)
+                console.log(await res.json());
+            })
             .catch(err => console.error(err))
     }
 
@@ -291,7 +294,6 @@ export const PUbicacion = props => {
 
     React.useEffect(() => {
         if (state) {
-            setUbi({});
             setState(false);
             fetch(URL)
                 .then(async res => setData(await res.json()))
