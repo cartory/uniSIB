@@ -36,15 +36,10 @@ import {
     Favorite,
     FavoriteBorder,
     Save as SaveIcon,
-    // HourglassEmptyOutlined,
     Check,
     Close,
-    // Edit as EditIcon,
-    // Add as AddIcon,
-    // Remove as RemoveIcon,
     Replay as ReplayIcon,
     HourglassEmpty,
-    // Delete as DeleteIcon,
 } from '@material-ui/icons'
 
 import Title from './utils/Title';
@@ -78,7 +73,7 @@ const Alert = props => {
 }
 
 const DataTable = (props) => {
-    const { data, state, model, setModel } = React.useContext(context);
+    const { data } = React.useContext(context);
     const [text, setText] = React.useState("");
     const [open, setOpen] = React.useState(false);
 
@@ -104,6 +99,13 @@ const DataTable = (props) => {
         if (reason === 'clickaway') return;
 
         setOpen(false);
+    }
+
+    const getDateDiffIndays = (date) => {
+        let dateDifference = Date.now() - date;
+        console.log(dateDifference);
+        let differenceInDays = dateDifference / (1000 * 3600 * 24);
+        return parseInt(differenceInDays);
     }
 
     return (
@@ -139,7 +141,9 @@ const DataTable = (props) => {
                                 <TableCell align="center">{row.registro}</TableCell>
                                 <TableCell align="center">{row.fechaSolicitud.split("T")[0]}</TableCell>
                                 <TableCell align="center">{row.libros}</TableCell>
-                                <TableCell align="center">{row.cantidadDias}</TableCell>
+                                <TableCell align="center">{
+                                    row.cantidadDias - getDateDiffIndays(Date.parse(row.fechaSolicitud))
+                                }</TableCell>
                                 <TableCell align="center">
                                     <Fab
                                         disabled
@@ -272,7 +276,7 @@ const Form = props => {
 
     const {
         model, setModel, edit, setEdit,
-        estudiantes, libros, classes, solicitados, setState
+        estudiantes, classes, solicitados, setState
     } = React.useContext(context);
 
     const onSubmit = event => {
