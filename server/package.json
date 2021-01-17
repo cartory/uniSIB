@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon src/app",
     "start": "node src/app",
+    "seed": "node seeders/databaseSeeder --exit",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "cartory",
