@@ -24,6 +24,7 @@ import {
     ListItem,
     ListItemIcon,
     ListItemText,
+    CardMedia,
 } from '@material-ui/core'
 
 import {
@@ -35,7 +36,13 @@ import {
     Menu as MenuIcon,
     ChevronLeft as ChevronLeftIcon,
     VerifiedUserSharp as VerifiedUserSharpIcon,
+    Face,
+    Map as MapIcon,
+    LibraryBooks,
+    MenuBook
 } from '@material-ui/icons'
+
+import logo from './utils/favicon.ico'
 
 const MyAppBar = (props) => {
     const { open, classes, handleDrawerOpen } = props;
@@ -51,16 +58,18 @@ const MyAppBar = (props) => {
                 >
                     <MenuIcon />
                 </IconButton>
+                <img src={logo} width="30" alt="$"/>
+                <CardMedia src={logo}></CardMedia>
                 <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                    UNISIB - Admin
-          </Typography>
+                    UNISIB
+                </Typography>
                 <IconButton color="inherit">
-                    <Typography
+                    {/* <Typography
                         component="h1"
                         variant="h6"
                     >
                         Cari
-                    </Typography>
+                    </Typography> */}
                     <Divider />
                     <VerifiedUserSharpIcon />
                 </IconButton>
@@ -86,14 +95,14 @@ const MenuList = props => {
     return (
         <div>
             <IconItem
-                title="Inicio"
+                title="Solicitudes"
                 icon={<DashboardIcon />}
                 setChild={setChild}
                 child={<PSolicitud />}
             />
             <IconItem
-                icon={<LayersIcon />}
-                title="Solicitudes"
+                icon={<MenuBook />}
+                title="Libros"
                 setChild={setChild}
                 child={<PLibro />}
             />
@@ -105,19 +114,19 @@ const MenuList = props => {
             />
             <IconItem
                 title="Generos"
-                icon={<BarChartIcon />}
+                icon={<LibraryBooks />}
                 setChild={setChild}
                 child={<PGenero />}
             />
             <IconItem
                 title="Ubicaciones"
-                icon={<LayersIcon />}
+                icon={<MapIcon />}
                 child={<PUbicacion />}
                 setChild={setChild}
             />
             <IconItem
                 title="Estudiantes"
-                icon={<PeopleIcon />}
+                icon={<Face />}
                 setChild={setChild}
                 child={<PEstudiante />}
             />
