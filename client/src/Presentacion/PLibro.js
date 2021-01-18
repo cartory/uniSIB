@@ -266,7 +266,7 @@ const Form = props => {
                                     name="fechaPublicacion"
                                     value={selectedDate}
                                     onChange={date => {
-                                        setSelectedDate(selectedDate);
+                                        setSelectedDate(date);
                                         ubi["fechaPublicacion"] = date.toISOString().split("T")[0];
                                     }}
                                     KeyboardButtonProps={{
