@@ -5,7 +5,7 @@ const estudiante = require("./estudianteSeeder");
 const seed = async () => {
     // await autor.seed(10);
     // await genero.seed();
-    // await estudiante.seed(10);
+    await estudiante.seed(10);
 }
 
 

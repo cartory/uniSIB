@@ -11,7 +11,9 @@ const nacionalidades = [
     "Cubano",
     "Boliviano",
     "Chileno",
-    "Italiano"
+    "Italiano",
+    "Chino",
+    "Peruano",
 ];
 
 const seed = async (number) => {
