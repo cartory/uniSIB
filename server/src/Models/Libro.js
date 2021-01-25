@@ -1,4 +1,4 @@
-const { Dato } = require("./Dato");
+const { Model } = require("./Model");
 
 const table = "libro";
 const cols = [
@@ -13,12 +13,12 @@ const cols = [
     "ubicacionID",
 ];
 
-class DLibro extends Dato {
+class Libro extends Model {
     constructor() {
         super(table, cols);
     }
 
-    listar() {
+    async list(_, res) {
         const sql = `
             select u.*, v.nombre as autor, w.nombre as genero, t.nombre as ubi 
             from libro u 
@@ -27,7 +27,8 @@ class DLibro extends Dato {
             join ubicacion t on u.ubicacionID = t.id
             where u.cantidad > 0
         `;
-        return this.query(sql);
+
+        res.json(await new Libro().query(sql));
     }
 
     async listarPorEstudiante(estudianteID) {
@@ -42,7 +43,7 @@ class DLibro extends Dato {
             AND s.estudianteID = e.id
             AND e.id = ${estudianteID}
         `;
-        return await this.query(sql);
+        return await new Libro().query(sql);
     }
 
     async actualizarCantidad(id) {
@@ -51,8 +52,38 @@ class DLibro extends Dato {
             WHERE   cantidad > 0 
             AND     id = ${id}
         `;
-        return await this.query(sql);
+        return await new Libro().query(sql);
+    }
+
+    async create(req, res) {
+        const {
+            titulo, sinopsis, fechaPublicacion, cantidad, estado,
+            autorID, generoID, ubicacionID
+        } = req.body;
+
+        res.json(await new Libro().crear([
+            titulo, sinopsis, fechaPublicacion, cantidad, estado,
+            autorID, generoID, ubicacionID
+        ]));
+    }
+
+    async edit(req, res) {
+        const {
+            titulo, sinopsis, fechaPublicacion, cantidad, estado,
+            autorID, generoID, ubicacionID
+        } = req.body;
+
+        res.json(await new Libro().editar([
+            titulo, sinopsis, fechaPublicacion, cantidad, estado, 
+            autorID, generoID, ubicacionID, req.params.id
+        ]));
+    }
+
+    async delete(req, res) {
+        res.json(await new Libro().eliminar(req.params.id));
     }
 }
 
-module.exports = { DLibro: new DLibro() };
+module.exports = { 
+    Libro: new Libro(),
+};

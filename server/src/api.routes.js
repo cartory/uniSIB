@@ -1,46 +1,45 @@
 const { Router } = require("express");
-const { NAutor } = require("./Negocio/NAutor");
 
 const router = Router();
 
-//  CONTROLADORES
-const { NLibro } = require("./Negocio/NLibro");
-const { NGenero } = require("./Negocio/NGenero");
-const { NUbicacion } = require("./Negocio/NUbicacion");
-const { NSolicitud } = require("./Negocio/NSolicitud");
-const { NEstudiante } = require("./Negocio/NEstudiante");
-
+//  MODELS
+const { Libro } = require("./Models/Libro");
+const { Autor } = require("./Models/Autor");
+const { Genero } = require("./Models/Genero");
+const { Solicitud } = require("./Models/Solicitud");
+const { Ubicacion } = require("./Models/Ubicacion");
+const { Estudiante } = require("./Models/Estudiante");
 
 router
     //  LIBRO
-    .get("/libros", NLibro.listar)
-    .post("/libros", NLibro.crear)
-    .put("/libros/:id", NLibro.editar)
-    .delete("/libros/:id", NLibro.eliminar)
+    .get("/libros", Libro.list)
+    .post("/libros", Libro.create)
+    .put("/libros/:id", Libro.edit)
+    .delete("/libros/:id", Libro.delete)
     //  AUTOR
-    .get("/autores", NAutor.listar)
-    .post("/autores", NAutor.crear)
-    .put("/autores/:id", NAutor.editar)
-    .delete("/autores/:id", NAutor.eliminar)
+    .get("/autores", Autor.list)
+    .post("/autores", Autor.create)
+    .put("/autores/:id", Autor.edit)
+    .delete("/autores/:id", Autor.delete)
     //  GÉNERO
-    .get("/generos", NGenero.listar)
-    .post("/generos", NGenero.crear)
-    .put("/generos/:id", NGenero.editar)
-    .delete("/generos/:id", NGenero.eliminar)
+    .get("/generos", Genero.list)
+    .post("/generos", Genero.create)
+    .put("/generos/:id", Genero.edit)
+    .delete("/generos/:id", Genero.delete)
     //  UBICACION
-    .get("/ubicaciones", NUbicacion.listar)
-    .post("/ubicaciones", NUbicacion.crear)
-    .put("/ubicaciones/:id", NUbicacion.editar)
-    .delete("/ubicaciones/:id", NUbicacion.eliminar)
+    .get("/ubicaciones", Ubicacion.listar)
+    .post("/ubicaciones", Ubicacion.create)
+    .put("/ubicaciones/:id", Ubicacion.edit)
+    .delete("/ubicaciones/:id", Ubicacion.delete)
     //  SOLICITUD
-    .get("/solicitudes", NSolicitud.listar)
-    .post("/solicitudes", NSolicitud.crear)
-    .put("/solicitudes/:id", NSolicitud.editar)
-    .post("/solicitudes/estado", NSolicitud.cambiarEstado)
+    .get("/solicitudes", Solicitud.verSolicitudes)
+    .post("/solicitudes", Solicitud.create)
+    .put("/solicitudes/:id", Solicitud.edit)
+    .post("/solicitudes/estado", Solicitud.cambiarEstado)
     //  ESTUDIANTE
-    .get("/estudiantes", NEstudiante.listar)
-    .post("/estudiantes", NEstudiante.crear)
-    .put("/estudiantes/:id", NEstudiante.editar)
-    .delete("/estudiantes/:id", NEstudiante.eliminar);
+    .get("/estudiantes", Estudiante.list)
+    .post("/estudiantes", Estudiante.create)
+    .put("/estudiantes/:id", Estudiante.edit)
+    .delete("/estudiantes/:id", Estudiante.delete);
 
 module.exports = router;

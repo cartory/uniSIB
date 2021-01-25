@@ -1,6 +1,6 @@
 const { db } = require("../Conexion");
 
-class Dato {
+class Model {
     constructor(table, cols) {
         this.cols = cols;
         this.table = table;
@@ -57,4 +57,4 @@ class Dato {
     }
 }
 
-module.exports = { Dato }
+module.exports = { Model }
