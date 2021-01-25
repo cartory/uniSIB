@@ -35,8 +35,6 @@ import {
     Face,
     Map as MapIcon,
     People as PeopleIcon,
-    BarChart as BarChartIcon,
-    Layers as LayersIcon,
     Menu as MenuIcon,
     ChevronLeft as ChevronLeftIcon,
     VerifiedUserSharp as VerifiedUserSharpIcon,
