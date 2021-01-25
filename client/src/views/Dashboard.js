@@ -22,19 +22,26 @@ import {
     CssBaseline,
     // Link,
     ListItem,
+    CardMedia,
     ListItemIcon,
     ListItemText,
 } from '@material-ui/core'
 
+import logo from './utils/favicon.ico'
+
 import {
     Dashboard as DashboardIcon,
     // ShoppingCart as ShoppingCartIcon,
+    Face,
+    Map as MapIcon,
     People as PeopleIcon,
     BarChart as BarChartIcon,
     Layers as LayersIcon,
     Menu as MenuIcon,
     ChevronLeft as ChevronLeftIcon,
     VerifiedUserSharp as VerifiedUserSharpIcon,
+    MenuBook,
+    LibraryBooks,
 } from '@material-ui/icons'
 
 const MyAppBar = (props) => {
@@ -51,6 +58,8 @@ const MyAppBar = (props) => {
                 >
                     <MenuIcon />
                 </IconButton>
+                <img src={logo} width="30" alt="$"/>
+                <CardMedia src={logo}></CardMedia>
                 <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                     UNISIB
           </Typography>
@@ -86,7 +95,7 @@ const MenuList = props => {
                 child={<SolicitudView/>}
             />
             <IconItem
-                icon={<LayersIcon />}
+                icon={<MenuBook />}
                 title="Libros"
                 setChild={setChild}
                 child={<LibroView/>}
@@ -98,20 +107,20 @@ const MenuList = props => {
                 child={<AutorView />}
             />
             <IconItem
-                title="Generos"
-                icon={<BarChartIcon />}
+                title="Géneros"
+                icon={<LibraryBooks />}
                 setChild={setChild}
                 child={<GeneroView/>}
             />
             <IconItem
                 title="Ubicaciones"
-                icon={<LayersIcon />}
+                icon={<MapIcon />}
                 child={<UbicacionView />}
                 setChild={setChild}
             />
             <IconItem
                 title="Estudiantes"
-                icon={<PeopleIcon />}
+                icon={<Face />}
                 setChild={setChild}
                 child={<EstudianteView />}
             />
