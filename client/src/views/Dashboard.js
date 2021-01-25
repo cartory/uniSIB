@@ -1,12 +1,12 @@
 import clsx from 'clsx';
 import React from 'react';
 
-import { PAutor } from './PAutor';
-import { PLibro } from './PLibro';
-import { PGenero } from './PGenero';
-import { PSolicitud } from './PSolicitud';
-import { PUbicacion } from './PUbicacion';
-import { PEstudiante } from './PEstudiante';
+import { AutorView } from './AutorView';
+import { LibroView } from './LibroView';
+import { GeneroView } from './GeneroView';
+import { SolicitudView } from './SolicitudView';
+import { UbicacionView } from './UbicacionView';
+import { EstudianteView } from './EstudianteView';
 
 import { useStyles } from './utils/styles'
 
@@ -24,7 +24,6 @@ import {
     ListItem,
     ListItemIcon,
     ListItemText,
-    CardMedia,
 } from '@material-ui/core'
 
 import {
@@ -36,13 +35,7 @@ import {
     Menu as MenuIcon,
     ChevronLeft as ChevronLeftIcon,
     VerifiedUserSharp as VerifiedUserSharpIcon,
-    Face,
-    Map as MapIcon,
-    LibraryBooks,
-    MenuBook
 } from '@material-ui/icons'
-
-import logo from './utils/favicon.ico'
 
 const MyAppBar = (props) => {
     const { open, classes, handleDrawerOpen } = props;
@@ -58,18 +51,10 @@ const MyAppBar = (props) => {
                 >
                     <MenuIcon />
                 </IconButton>
-                <img src={logo} width="30" alt="$"/>
-                <CardMedia src={logo}></CardMedia>
                 <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                     UNISIB
-                </Typography>
+          </Typography>
                 <IconButton color="inherit">
-                    {/* <Typography
-                        component="h1"
-                        variant="h6"
-                    >
-                        Cari
-                    </Typography> */}
                     <Divider />
                     <VerifiedUserSharpIcon />
                 </IconButton>
@@ -98,37 +83,37 @@ const MenuList = props => {
                 title="Solicitudes"
                 icon={<DashboardIcon />}
                 setChild={setChild}
-                child={<PSolicitud />}
+                child={<SolicitudView/>}
             />
             <IconItem
-                icon={<MenuBook />}
+                icon={<LayersIcon />}
                 title="Libros"
                 setChild={setChild}
-                child={<PLibro />}
+                child={<LibroView/>}
             />
             <IconItem
                 title="Autores"
                 icon={<PeopleIcon />}
                 setChild={setChild}
-                child={<PAutor />}
+                child={<AutorView />}
             />
             <IconItem
                 title="Generos"
-                icon={<LibraryBooks />}
+                icon={<BarChartIcon />}
                 setChild={setChild}
-                child={<PGenero />}
+                child={<GeneroView/>}
             />
             <IconItem
                 title="Ubicaciones"
-                icon={<MapIcon />}
-                child={<PUbicacion />}
+                icon={<LayersIcon />}
+                child={<UbicacionView />}
                 setChild={setChild}
             />
             <IconItem
                 title="Estudiantes"
-                icon={<Face />}
+                icon={<PeopleIcon />}
                 setChild={setChild}
-                child={<PEstudiante />}
+                child={<EstudianteView />}
             />
         </div>
     );
@@ -175,7 +160,7 @@ export default function Dashboard() {
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     const [open, setOpen] = React.useState(false);
-    const [child, setChild] = React.useState(<PSolicitud />);
+    const [child, setChild] = React.useState(<SolicitudView />);
 
     const handleDrawerOpen = () => setOpen(true);
     const handleDrawerClose = () => setOpen(false);

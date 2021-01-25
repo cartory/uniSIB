@@ -26,6 +26,12 @@ import {
 } from '@material-ui/core'
 
 import { Alert } from '@material-ui/lab'
+import {
+    KeyboardDatePicker,
+    MuiPickersUtilsProvider,
+} from '@material-ui/pickers'
+
+import DateFnsUtils from '@date-io/date-fns'
 
 import {
     Save as SaveIcon,
@@ -36,8 +42,11 @@ import {
 } from '@material-ui/icons'
 
 import Title from './utils/Title';
+import { LibroController } from '../controllers/libroController';
 
-const URL = "http://localhost:8000/api/ubicaciones";
+const URL = "http://localhost:8000/api/libros";
+const ROOT = "http://localhost:8000/api";
+const controller = new LibroController();
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -53,18 +62,7 @@ const useStyles = makeStyles((theme) => ({
 
 const DataTable = props => {
     const [open, setOpen] = React.useState(false);
-
     const { data, editMode, setState } = props;
-
-    const onDelete = async id => {
-        try {
-            await fetch(`${URL}/${id}`, { method: "DELETE" })
-            setState(true);
-            setOpen(true);
-        } catch (error) {
-            console.error(error);
-        }
-    }
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') return;
@@ -77,12 +75,14 @@ const DataTable = props => {
                 <TableHead>
                     <TableRow>
                         <TableCell size="small"><strong>ID</strong></TableCell>
-                        <TableCell align="center"><strong>Tipo</strong></TableCell>
-                        <TableCell><strong>Nombre</strong></TableCell>
-                        <TableCell><strong>Descripción</strong></TableCell>
+                        <TableCell><strong>Título</strong></TableCell>
+                        <TableCell><strong>Sinopsis</strong></TableCell>
+                        <TableCell><strong>Publicación</strong></TableCell>
+                        <TableCell align="center"><strong>Cantidad</strong></TableCell>
+                        <TableCell align="center"><strong>Género</strong></TableCell>
+                        <TableCell align="center"><strong>Autor</strong></TableCell>
                         <TableCell align="center"><strong>Ubi</strong></TableCell>
-                        <TableCell align="center"><strong>Ubis</strong></TableCell>
-                        <TableCell size="small"><strong>Acción</strong></TableCell>
+                        <TableCell size="small" align="center"><strong>Acción</strong></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -103,20 +103,10 @@ const DataTable = props => {
                                 }}
                             >
                                 <TableCell size="small"><strong>{row.id}</strong></TableCell>
-                                <TableCell align="center">
-                                    <Fab
-                                        disabled
-                                        variant="extended"
-                                        size="small"
-                                        style={{
-                                            color: "black"
-                                        }}
-                                    >{row.tipo}
-                                    </Fab>
-                                </TableCell>
-                                <TableCell align="center">{row.nombre}</TableCell>
-                                <TableCell>{row.descripcion}</TableCell>
-                                <TableCell align="center">
+                                <TableCell>{row.titulo}</TableCell>
+                                <TableCell>{row.sinopsis}</TableCell>
+                                <TableCell>{row.fechaPublicacion.split("T")[0]}</TableCell>
+                                <TableCell align="center">{
                                     <Fab
                                         disabled
                                         size="small"
@@ -124,20 +114,13 @@ const DataTable = props => {
                                         style={{
                                             color: "black"
                                         }}
-                                    >{row.ubicacion ?? <RemoveIcon />}
+                                    >{row.cantidad ?? <RemoveIcon />}
                                     </Fab>
+                                }
                                 </TableCell>
-                                <TableCell align="center">
-                                    <Fab
-                                        disabled
-                                        size="small"
-                                        variant="extended"
-                                        style={{
-                                            color: "black"
-                                        }}
-                                    >{row.ubicaciones}
-                                    </Fab>
-                                </TableCell>
+                                <TableCell align="center">{row.genero}</TableCell>
+                                <TableCell align="center">{row.autor}</TableCell>
+                                <TableCell align="center">{row.ubi}</TableCell>
                                 <TableCell align="center" size="small">
                                     <Grid container direction="row">
                                         <Grid item title="edit">
@@ -153,7 +136,9 @@ const DataTable = props => {
                                             <a
                                                 href="#" alt="#"
                                                 style={{ color: "indianred" }}
-                                                onClick={() => onDelete(row.id)}
+                                                onClick={() => controller.onDelete(
+                                                    row.id, [setOpen, setState]
+                                                )}
                                             >
                                                 <DeleteIcon />
                                             </a>
@@ -171,13 +156,13 @@ const DataTable = props => {
                 onClose={handleClose}
             >
                 <Alert
-                    color="error"
+                    color="warning"
                     elevation={0}
                     variant="standard"
                     onClose={handleClose}
                 >
                     Eliminado Correctamente
-                </Alert>
+                    </Alert>
             </Snackbar>
         </>
     );
@@ -185,9 +170,29 @@ const DataTable = props => {
 
 const Form = props => {
     const [open, setOpen] = React.useState(false);
+    const [ubis, setUbis] = React.useState([]);
+    const [autores, setAutores] = React.useState([]);
+    const [generos, setGeneros] = React.useState([]);
+
+    const [selectedDate, setSelectedDate] = React.useState(new Date());
+
+    React.useEffect(() => {
+        fetch(`${ROOT}/ubicaciones`)
+            .then(async res => setUbis(await res.json()))
+            .catch(err => console.error(err));
+
+        fetch(`${ROOT}/autores`)
+            .then(async res => setAutores(await res.json()))
+            .catch(err => console.error(err));
+
+        fetch(`${ROOT}/generos`)
+            .then(async res => setGeneros(await res.json()))
+            .catch(err => console.error(err));
+    }, []);
+
     const {
         classes,
-        edit = false, ubi, ubis,
+        edit = false, ubi,
         setUbi, setState, setEdit
     } = props;
 
@@ -196,37 +201,14 @@ const Form = props => {
         setOpen(false);
     }
 
-    const tipos = [
-        "Universidad", "Facultad", "Sección", "Librero", "Estante"
-    ];
-
-    const onSubmit = async event => {
-        event.preventDefault();
-        try {
-            await fetch(`${URL}/${edit ? ubi.id : ""}`, {
-                method: edit ? "PUT" : "POST",
-                headers: {
-                    "Accept": "Application/json",
-                    "Content-Type": "Application/json",
-                },
-                body: JSON.stringify(ubi)
-            })
-            setState(true);
-            setOpen(true);
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    const onInput = target => {
-        const { name, value } = target;
-        ubi[name] = value === 0 ? null : value;
-        setUbi(ubi);
-    }
-
     return (
         <>
-            <form onSubmit={onSubmit}>
+            <form onSubmit={async event => {
+                event.preventDefault();
+                await controller.onSubmit([
+                    setOpen, setState
+                ], ubi, edit);
+            }}>
                 <Grid
                     container
                     spacing={3}
@@ -238,55 +220,123 @@ const Form = props => {
                         <TextField
                             fullWidth
                             required={!edit}
-                            name="nombre"
-                            label="Nombre"
+                            name="titulo"
+                            label="Titulo"
                             autoComplete="given-name"
-                            helperText={edit ? ubi.nombre : null}
-                            onInput={e => onInput(e.target)}
+                            helperText={ubi["titulo"]}
+                            onInput={e => controller.onInput(
+                                e.target, ubi, setUbi
+                            )}
                         />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <InputLabel htmlFor="max-width">Publicación</InputLabel>
+                        <FormControl fullWidth>
+                            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                <KeyboardDatePicker
+                                    required
+                                    disableToolbar
+
+                                    variant="inline"
+                                    format="yyyy/MM/dd"
+                                    name="fechaPublicacion"
+                                    value={selectedDate}
+                                    onChange={date => {
+                                        setSelectedDate(date);
+                                        ubi["fechaPublicacion"] = date.toISOString().split("T")[0];
+                                        setUbi(ubi);
+                                        console.log(ubi);
+                                    }}
+                                    KeyboardButtonProps={{
+                                        'aria-label': 'change date',
+                                    }}
+                                />
+                            </MuiPickersUtilsProvider>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <InputLabel htmlFor="max-width">Cantidad</InputLabel>
+                        <FormControl fullWidth>
+                            <TextField
+                                fullWidth
+                                type="number"
+                                name="cantidad"
+                                required={!edit}
+                                autoComplete="given-name"
+                                helperText={ubi["cantidad"]}
+                                onInput={e => controller.onInput(
+                                    e.target, ubi, setUbi
+                                )}
+                            />
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <InputLabel htmlFor="max-width">Género</InputLabel>
+                        <FormControl fullWidth>
+                            <Select
+                                required={!edit}
+                                fullWidth
+                                name="generoID"
+                                defaultValue={ubi["generoID"] ?? ""}
+                                onChange={event => controller.onInput(
+                                    event.target, ubi, setUbi
+                                )}
+                            >
+                                {generos.map(genero => (
+                                    <MenuItem key={genero.id} alignItems="center" value={genero.id}>{genero.nombre}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <InputLabel htmlFor="max-width">Ubicación</InputLabel>
+                        <FormControl fullWidth>
+                            <Select
+                                required={!edit}
+                                fullWidth
+                                name="ubicacionID"
+                                defaultValue={ubi["ubicacionID"] ?? ""}
+                                onChange={event => controller.onInput(
+                                    event.target, ubi, setUbi
+                                )}
+                            >
+                                {ubis.map(ubi => (
+                                    <MenuItem key={ubi.id} alignItems="center" value={ubi.id}>{ubi.nombre}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={12}>
+                        <InputLabel htmlFor="max-width">Autor</InputLabel>
+                        <FormControl fullWidth>
+                            <Select
+                                required={!edit}
+                                fullWidth
+                                name="autorID"
+                                defaultValue={ubi["autorID"] ?? ''}
+                                onChange={event => controller.onInput(
+                                    event.target, ubi, setUbi
+                                )}
+                            >
+                                {autores.map(e => (
+                                    <MenuItem key={e.id} alignItems="center" value={e.id}>{e.nombre}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={12}>
                         <TextField
                             fullWidth
                             multiline
-                            name="descripcion"
-                            label="Descripción"
+                            margin="none"
+                            name="sinopsis"
+                            label="Sinopsis"
                             autoComplete="family-name"
-                            helperText={edit ? ubi.descripcion : null}
-                            onInput={e => onInput(e.target)}
+                            helperText={ubi["sinopsis"]}
+                            onInput={e => controller.onInput(
+                                e.target, ubi, setUbi
+                            )}
                         />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <InputLabel htmlFor="max-width">Tipo Ubi</InputLabel>
-                        <FormControl fullWidth>
-                            <Select
-                                required={!edit}
-                                fullWidth
-                                name="tipo"
-                                defaultValue={ubi["tipo"] ?? ""}
-                                onChange={event => onInput(event.target)}
-                            >
-                                {tipos.map(tipo => (
-                                    <MenuItem key={tipo} alignItems="center" value={tipo}>{tipo}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <InputLabel htmlFor="max-width">Pertenece a</InputLabel>
-                        <FormControl fullWidth>
-                            <Select
-                                fullWidth
-                                name="ubicacionID"
-                                defaultValue={ubi["tipo"] ?? "0"}
-                                onChange={event => onInput(event.target)}
-                            >
-                                <MenuItem key={0} value={0}>Ninguna</MenuItem>
-                                {ubis.map(ubi => (
-                                    <MenuItem key={ubi.id} value={ubi.id}>{ubi.nombre}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
                     </Grid>
                     <Grid item>
                         <Button
@@ -302,7 +352,7 @@ const Form = props => {
                             type="reset"
                             variant="contained"
                             onClick={() => {
-                                delete ubi.id
+                                setUbi({})
                                 setEdit(false)
                             }}
                             size="small"
@@ -330,10 +380,10 @@ const Form = props => {
     );
 }
 
-export const PUbicacion = props => {
+export const LibroView = props => {
     const classes = useStyles();
 
-    const [ubi, setUbi] = React.useState({});
+    const [libro, setLibro] = React.useState({});
     const [data, setData] = React.useState([]);
 
     const [edit, setEdit] = React.useState(false);
@@ -341,22 +391,26 @@ export const PUbicacion = props => {
 
     const editMode = row => {
         setEdit(true);
-        setUbi(row);
+        let date = row["fechaPublicacion"];
+        row["fechaPublicacion"] = date.split("T")[0];
+        setLibro(row);
+        console.log(row);
     }
 
     React.useEffect(() => {
         if (state) {
+            setLibro({});
             setState(false);
             fetch(URL)
                 .then(async res => setData(await res.json()))
-                .catch(err => console.error(err))
+                .catch(err => console.error(err));
         }
     }, [state]);
 
     return (
         <React.Fragment>
             <Typography variant="h4" gutterBottom color="primary">
-                <strong>GESTIONAR UBICACIÓN</strong>
+                <strong>GESTIONAR LIBRO</strong>
             </Typography>
             <Grid
                 container
@@ -367,21 +421,21 @@ export const PUbicacion = props => {
                 <Grid item xs={12} sm={4}>
                     <Paper className={classes.paper}>
                         <Title>
-                            {edit ? "Editar " : "Crear "}Ubicación
+                            {edit ? "Editar " : "Crear "}Libro
                         </Title>
                         <Form
                             classes={classes}
-                            edit={edit} ubi={ubi}
-                            setUbi={setUbi}
+                            edit={edit} ubi={libro}
+                            setUbi={setLibro}
                             setEdit={setEdit}
                             setState={setState}
-                            ubis={data.filter(row => ubi.id !== row.id)}
+                            ubis={data.filter(row => libro.id !== row.id)}
                         />
                     </Paper>
                 </Grid>
                 <Grid item xs={12} sm={8}>
                     <Paper className={classes.paper}>
-                        <Title>Ver Ubicaciones</Title>
+                        <Title>Ver Libros</Title>
                         <DataTable
                             data={data}
                             setState={setState}

@@ -1,4 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable jsx-a11y/anchor-has-content */
 import React from 'react';
 
 import {
@@ -6,36 +7,41 @@ import {
     Grid,
     Paper,
     Button,
-    Select,
     TextField,
-    Typography,
-    InputLabel,
-    MenuItem,
-    Snackbar,
+
     Table,
     TableRow,
     TableHead,
     TableCell,
     TableBody,
+    Typography,
+    Snackbar,
+
+    Select,
+    MenuItem,
+    InputLabel,
 
     makeStyles,
     FormControl,
-} from '@material-ui/core';
-
-import {
-    Alert
-} from '@material-ui/lab'
+} from '@material-ui/core'
 
 import {
     Save as SaveIcon,
     Edit as EditIcon,
-    Delete as DeleteIcon,
+    Remove as RemoveIcon,
     Replay as ReplayIcon,
-} from '@material-ui/icons';
+    Delete as DeleteIcon,
+} from '@material-ui/icons'
+
+import {
+    Alert as MuiAlert
+} from '@material-ui/lab'
 
 import Title from './utils/Title';
+import { GeneroController } from '../controllers/generoController'
 
-const URL = "http://localhost:8000/api/estudiantes";
+const URL = "http://localhost:8000/api/generos";
+const controller = new GeneroController();
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -49,47 +55,41 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-/**
- * DATATABLE COMPONENT
- * @param {*} props 
- */
+const Alert = props => {
+    return (
+        <MuiAlert
+            color="info"
+            elevation={0} variant="standard" {...props}
+        />
+    );
+}
 
 const DataTable = props => {
-    const [open, setOpen] = React.useState(false);
-    const { data, setState, editMode } = props;
-
-    const onDelete = async id => {
-        try {
-            await fetch(`${URL}/${id}`, { method: "DELETE" });
-            setState(true);
-            setOpen(true);
-        } catch (error) {
-            console.error(error);
-        }
-    }
+    const [open, setOpen] = React.useState("");
+    const { data, editMode, setState } = props;
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') return;
+
         setOpen(false);
     }
 
     return (
         <>
-            <Table size="small">
+            <Table size="small" >
                 <TableHead>
                     <TableRow>
-                        <TableCell size="small" ><strong>ID</strong></TableCell>
-                        <TableCell><strong>Cédula</strong></TableCell>
-                        <TableCell><strong>Registro</strong></TableCell>
+                        <TableCell size="small"><strong>ID</strong></TableCell>
                         <TableCell><strong>Nombre</strong></TableCell>
-                        <TableCell><strong>Correo</strong></TableCell>
-                        <TableCell><strong>Sexo</strong></TableCell>
+                        <TableCell><strong>Descripción</strong></TableCell>
+                        <TableCell align="center"><strong>SGénero</strong></TableCell>
+                        <TableCell align="center"><strong>SubGéneros</strong></TableCell>
                         <TableCell size="small"><strong>Acción</strong></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {
-                        data.map((row) => (
+                        data.map(row => (
                             <TableRow
                                 id={row.id}
                                 key={row.id}
@@ -104,28 +104,37 @@ const DataTable = props => {
                                         .style.backgroundColor = "inherit"
                                 }}
                             >
-                                <TableCell size="small" ><strong>{row.id}</strong></TableCell>
-                                <TableCell>{row.cedula}</TableCell>
-                                <TableCell>{row.registro}</TableCell>
+                                <TableCell size="small"><strong>{row.id}</strong></TableCell>
                                 <TableCell>{row.nombre}</TableCell>
-                                <TableCell>{row.correo}</TableCell>
-                                <TableCell align="center" >
+                                <TableCell>{row.descripcion}</TableCell>
+                                <TableCell align="center">
                                     <Fab
                                         disabled
                                         size="small"
-                                        variant="round"
+                                        variant="extended"
                                         style={{
-                                            color: "black",
-                                            backgroundColor: row.sexo ? "lightblue" : "lightpink"
+                                            color: "black"
                                         }}
-                                    >{row.sexo ? "M" : "F"}
+                                    >
+                                        {row.genero ?? <RemoveIcon />}
+                                    </Fab>
+                                </TableCell>
+                                <TableCell align="center">
+                                    <Fab
+                                        disabled
+                                        size="small"
+                                        variant="extended"
+                                        style={{
+                                            color: "black"
+                                        }}
+                                    >
+                                        {row.generos}
                                     </Fab>
                                 </TableCell>
                                 <TableCell align="center" size="small">
                                     <Grid container direction="row">
                                         <Grid item title="edit">
                                             <a
-                                                title="edit"
                                                 href="#" alt="#"
                                                 style={{ color: "green" }}
                                                 onClick={() => editMode(row)}
@@ -133,12 +142,13 @@ const DataTable = props => {
                                                 <EditIcon />
                                             </a>
                                         </Grid>
-                                        <Grid item title="delete">
+                                        <Grid item>
                                             <a
-                                                title="delete"
                                                 href="#" alt="#"
                                                 style={{ color: "indianred" }}
-                                                onClick={() => onDelete(row.id)}
+                                                onClick={() => controller.onDelete(row.id, [
+                                                    setOpen, setState
+                                                ])}
                                             >
                                                 <DeleteIcon />
                                             </a>
@@ -150,70 +160,35 @@ const DataTable = props => {
                     }
                 </TableBody>
             </Table>
-            <Snackbar
-                open={open}
-                autoHideDuration={3000}
-                onClose={handleClose}
-            >
-                <Alert
-                    color="error"
-                    elevation={0}
-                    variant="standard"
-                    onClose={handleClose}
-                >
-                    Eliminado Correctamente
+            <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity="success" color="error">
+                    {"Eliminado Correctamente"}
                 </Alert>
             </Snackbar>
         </>
     );
 }
 
-/**
- * FORM COMPONENT
- * @param {*} props 
- */
-
 const Form = props => {
     const [open, setOpen] = React.useState(false);
     const {
         classes,
-        edit = false, estudiante,
-        setEstudiante, setState, setEdit,
+        edit = false, genero, generos,
+        setGenero, setState, setEdit
     } = props;
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') return;
+
         setOpen(false);
-    }
-
-    const onSubmit = async event => {
-        event.preventDefault();
-
-        try {
-            await fetch(`${URL}/${edit ? estudiante.id : ""}`, {
-                method: edit ? "PUT" : "POST",
-                headers: {
-                    "Accept": "Application/json",
-                    "Content-Type": "Application/json"
-                },
-                body: JSON.stringify(estudiante)
-            });
-            setState(true);
-            setOpen(true);
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    const onInput = target => {
-        const { name, value } = target;
-        estudiante[name] = value;
-        setEstudiante(estudiante);
     }
 
     return (
         <>
-            <form onSubmit={onSubmit}>
+            <form onSubmit={event => {
+                event.preventDefault();
+                controller.onSubmit([setOpen, setState], genero, edit)
+            }}>
                 <Grid
                     container
                     spacing={3}
@@ -224,61 +199,44 @@ const Form = props => {
                     <Grid item xs={12} sm={12}>
                         <TextField
                             fullWidth
+                            required={!edit}
                             name="nombre"
                             label="Nombre"
                             autoComplete="given-name"
-                            required={!edit}
-                            helperText={edit ? estudiante.nombre : null}
-                            onInput={e => onInput(e.target)}
+                            helperText={genero["nombre"]}
+                            onInput={e => controller.onInput(
+                                e.target, genero, setGenero
+                            )}
                         />
                     </Grid>
                     <Grid item xs={12} sm={12}>
                         <TextField
                             fullWidth
-                            name="correo"
-                            label="Correo"
-                            autoComplete="given-name"
-                            helperText={estudiante["correo"]}
-                            onInput={e => onInput(e.target)}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={12}>
-                        <TextField
-                            fullWidth
-                            required={!edit}
-                            name="registro"
-                            type="number"
-                            label="registro"
-                            autoComplete="given-name"
-                            helperText={estudiante["registro"]}
-                            onInput={e => onInput(e.target)}
+                            multiline
+                            name="descripcion"
+                            label="Descripción"
+                            autoComplete="family-name"
+                            helperText={genero["descripcion"]}
+                            onInput={e => controller.onInput(
+                                e.target, genero, setGenero
+                            )}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <FormControl>
-                            <TextField
-                                fullWidth
-                                type="number"
-                                required={!edit}
-                                name="cedula"
-                                label="Cédula"
-                                autoComplete="family-name"
-                                helperText={edit ? estudiante.cedula : null}
-                                onInput={event => onInput(event.target)}
-                            />
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <InputLabel htmlFor="max-width">Sexo</InputLabel>
+                        <InputLabel htmlFor="max-width">SubGénero</InputLabel>
                         <FormControl fullWidth>
                             <Select
-                                required={!edit}
-                                name="sexo"
-                                onChange={event => onInput(event.target)}
-                                defaultValue=""
+                                fullWidth
+                                name="generoID"
+                                defaultValue={genero["generoID"] ?? "0"}
+                                onChange={event => controller.onInput(
+                                    event.target, genero, setGenero
+                                )}
                             >
-                                <MenuItem key={1} value={true}>M</MenuItem>
-                                <MenuItem key={0} value={false}>F</MenuItem>
+                                <MenuItem key={0} value={0}>Ninguna</MenuItem>
+                                {generos.map(genero => (
+                                    <MenuItem key={genero.id} value={genero.id}>{genero.nombre}</MenuItem>
+                                ))}
                             </Select>
                         </FormControl>
                     </Grid>
@@ -295,50 +253,41 @@ const Form = props => {
                         <Button
                             type="reset"
                             variant="contained"
-                            onClick={() => setEdit(false)}
+                            onClick={() => {
+                                setGenero({})
+                                setEdit(false)
+                            }}
                             size="small"
                             className={classes.button}
                             startIcon={< ReplayIcon />}
                         >Limpiar</Button>
                     </Grid>
                 </Grid>
-                <Snackbar
-                    open={open}
-                    autoHideDuration={3000}
-                    onClose={handleClose}
-                >
-                    <Alert
-                        color={edit ? "success": "info"}
-                        elevation={0}
-                        variant="standard"
-                        onClose={handleClose}
-                    >
-                        Guardado Correctamente
-                    </Alert>
-                </Snackbar>
             </form>
+            <Snackbar open={open} autoHideDuration={3000} onClose={(event, reason) => {
+                if (reason === 'clickaway') return;
+                setOpen(false);
+            }}>
+                <Alert onClose={handleClose} severity="success" color={edit ? "success" : "info"}>
+                    {"Guardado Correctamente"}
+                </Alert>
+            </Snackbar>
         </>
     );
 }
 
-/**
- * AUTOR VIEW 
- * @param {*} props 
- */
-
-export const PEstudiante = props => {
+export const GeneroView = props => {
     const classes = useStyles();
 
+    const [genero, setGenero] = React.useState({});
     const [data, setData] = React.useState([]);
-    const [estudiante, setEstudiante] = React.useState({});
 
     const [edit, setEdit] = React.useState(false);
     const [state, setState] = React.useState(true);
 
-
     const editMode = row => {
         setEdit(true);
-        setEstudiante(row);
+        setGenero(row);
     }
 
     React.useEffect(() => {
@@ -346,14 +295,14 @@ export const PEstudiante = props => {
             setState(false);
             fetch(URL)
                 .then(async res => setData(await res.json()))
-                .catch(err => console.error(err));
+                .catch(err => console.error(err))
         }
-    }, [state])
+    }, [state]);
 
     return (
         <React.Fragment>
             <Typography variant="h4" gutterBottom color="primary">
-                <strong>GESTIONAR ESTUDIANTE</strong>
+                <strong>GESTIONAR GÉNERO</strong>
             </Typography>
             <Grid
                 container
@@ -364,20 +313,21 @@ export const PEstudiante = props => {
                 <Grid item xs={12} sm={4}>
                     <Paper className={classes.paper}>
                         <Title>
-                            {edit ? "Editar " : "Crear "}Estudiante
+                            {edit ? "Editar " : "Crear "}Género
                         </Title>
                         <Form
                             classes={classes}
-                            edit={edit} estudiante={estudiante}
+                            edit={edit} genero={genero}
+                            setGenero={setGenero}
                             setEdit={setEdit}
-                            setEstudiante={setEstudiante}
                             setState={setState}
+                            generos={data.filter(row => genero.id !== row.id)}
                         />
                     </Paper>
                 </Grid>
                 <Grid item xs={12} sm={8}>
                     <Paper className={classes.paper}>
-                        <Title>Ver Estudiantes</Title>
+                        <Title>Ver Género</Title>
                         <DataTable
                             data={data}
                             setState={setState}

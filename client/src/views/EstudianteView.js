@@ -6,10 +6,12 @@ import {
     Grid,
     Paper,
     Button,
+    Select,
     TextField,
     Typography,
+    InputLabel,
+    MenuItem,
     Snackbar,
-
     Table,
     TableRow,
     TableHead,
@@ -17,7 +19,12 @@ import {
     TableBody,
 
     makeStyles,
+    FormControl,
 } from '@material-ui/core';
+
+import {
+    Alert
+} from '@material-ui/lab'
 
 import {
     Save as SaveIcon,
@@ -26,11 +33,10 @@ import {
     Replay as ReplayIcon,
 } from '@material-ui/icons';
 
-import { Alert } from '@material-ui/lab';
-
 import Title from './utils/Title';
+import { EstudianteController } from '../controllers/estudianteController'
 
-const URL = "http://localhost:8000/api/autores";
+const URL = "http://localhost:8000/api/estudiantes";
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -44,24 +50,11 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-/**
- * DATATABLE COMPONENT
- * @param {*} props 
- */
+const controller = new EstudianteController();
 
 const DataTable = props => {
     const [open, setOpen] = React.useState(false);
     const { data, setState, editMode } = props;
-
-    const onDelete = async id => {
-        try {
-            await fetch(`${URL}/${id}`, { method: "DELETE" })
-            setState(true);
-            setOpen(true);
-        } catch (error) {
-            console.error(error);
-        }
-    }
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') return;
@@ -74,9 +67,11 @@ const DataTable = props => {
                 <TableHead>
                     <TableRow>
                         <TableCell size="small" ><strong>ID</strong></TableCell>
+                        <TableCell><strong>Cédula</strong></TableCell>
+                        <TableCell><strong>Registro</strong></TableCell>
                         <TableCell><strong>Nombre</strong></TableCell>
-                        <TableCell><strong>Biografía</strong></TableCell>
-                        <TableCell><strong>Nacionalidad</strong></TableCell>
+                        <TableCell><strong>Correo</strong></TableCell>
+                        <TableCell><strong>Sexo</strong></TableCell>
                         <TableCell size="small"><strong>Acción</strong></TableCell>
                     </TableRow>
                 </TableHead>
@@ -98,17 +93,20 @@ const DataTable = props => {
                                 }}
                             >
                                 <TableCell size="small" ><strong>{row.id}</strong></TableCell>
+                                <TableCell>{row.cedula}</TableCell>
+                                <TableCell>{row.registro}</TableCell>
                                 <TableCell>{row.nombre}</TableCell>
-                                <TableCell>{row.biografia}</TableCell>
-                                <TableCell>
+                                <TableCell>{row.correo}</TableCell>
+                                <TableCell align="center" >
                                     <Fab
                                         disabled
                                         size="small"
-                                        variant="extended"
+                                        variant="round"
                                         style={{
-                                            color: "black"
+                                            color: "black",
+                                            backgroundColor: row.sexo ? "lightblue" : "lightpink"
                                         }}
-                                    >{row.nacionalidad}
+                                    >{row.sexo ? "M" : "F"}
                                     </Fab>
                                 </TableCell>
                                 <TableCell align="center" size="small">
@@ -128,7 +126,9 @@ const DataTable = props => {
                                                 title="delete"
                                                 href="#" alt="#"
                                                 style={{ color: "indianred" }}
-                                                onClick={() => onDelete(row.id)}
+                                                onClick={async () => await controller.onDelete(
+                                                    row.id, [setOpen, setState]
+                                                )}
                                             >
                                                 <DeleteIcon />
                                             </a>
@@ -146,13 +146,13 @@ const DataTable = props => {
                 onClose={handleClose}
             >
                 <Alert
-                    color="warning"
+                    color="error"
                     elevation={0}
                     variant="standard"
                     onClose={handleClose}
                 >
                     Eliminado Correctamente
-                    </Alert>
+                </Alert>
             </Snackbar>
         </>
     );
@@ -167,42 +167,23 @@ const Form = props => {
     const [open, setOpen] = React.useState(false);
     const {
         classes,
-        edit = false, autor,
-        setAutor, setState, setEdit,
+        edit = false, estudiante,
+        setEstudiante, setState, setEdit,
     } = props;
-
-    const onSubmit = async event => {
-        event.preventDefault();
-        try {
-            await fetch(`${URL}/${edit ? autor.id : ""}`, {
-                method: edit ? "PUT" : "POST",
-                headers: {
-                    "Accept": "Application/json",
-                    "Content-Type": "Application/json"
-                },
-                body: JSON.stringify(autor)
-            });
-            setState(true);
-            setOpen(true);
-        } catch (error) {
-            console.error(error);
-        }
-    }
 
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') return;
         setOpen(false);
     }
 
-    const onInput = target => {
-        const { name, value } = target;
-        autor[name] = value;
-        setAutor(autor);
-    }
-
     return (
         <>
-            <form onSubmit={onSubmit}>
+            <form onSubmit={event => {
+                event.preventDefault();
+                controller.onSubmit([
+                    setState, setOpen
+                ], estudiante, edit)
+            }}>
                 <Grid
                     container
                     spacing={3}
@@ -217,31 +198,69 @@ const Form = props => {
                             label="Nombre"
                             autoComplete="given-name"
                             required={!edit}
-                            helperText={autor["nombre"]}
-                            onInput={e => onInput(e.target)}
+                            helperText={edit ? estudiante.nombre : null}
+                            onInput={e => controller.onInput(
+                                e.target, estudiante, setEstudiante
+                            )}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={12}>
+                        <TextField
+                            fullWidth
+                            name="correo"
+                            label="Correo"
+                            autoComplete="given-name"
+                            helperText={estudiante["correo"]}
+                            onInput={e => controller.onInput(
+                                e.target, estudiante, setEstudiante
+                            )}
                         />
                     </Grid>
                     <Grid item xs={12} sm={12}>
                         <TextField
                             fullWidth
                             required={!edit}
-                            name="nacionalidad"
-                            label="Nacionalidad"
-                            autoComplete="family-name"
-                            helperText={autor["nacionalidad"]}
-                            onInput={e => onInput(e.target)}
+                            name="registro"
+                            type="number"
+                            label="registro"
+                            autoComplete="given-name"
+                            helperText={estudiante["registro"]}
+                            onInput={e => controller.onInput(
+                                e.target, estudiante, setEstudiante
+                            )}
                         />
                     </Grid>
-                    <Grid item xs={12} sm={12}>
-                        <TextField
-                            fullWidth
-                            multiline
-                            name="biografia"
-                            label="biografia"
-                            autoComplete="family-name"
-                            helperText={autor["biografia"]}
-                            onInput={e => onInput(e.target)}
-                        />
+                    <Grid item xs={12} sm={6}>
+                        <FormControl>
+                            <TextField
+                                fullWidth
+                                type="number"
+                                required={!edit}
+                                name="cedula"
+                                label="Cédula"
+                                autoComplete="family-name"
+                                helperText={edit ? estudiante.cedula : null}
+                                onInput={event => controller.onInput(
+                                    event.target, estudiante, setEstudiante
+                                )}
+                            />
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <InputLabel htmlFor="max-width">Sexo</InputLabel>
+                        <FormControl fullWidth>
+                            <Select
+                                required={!edit}
+                                name="sexo"
+                                onChange={event => controller.onInput(
+                                    event.target, estudiante, setEstudiante
+                                )}
+                                defaultValue=""
+                            >
+                                <MenuItem key={1} value={true}>M</MenuItem>
+                                <MenuItem key={0} value={false}>F</MenuItem>
+                            </Select>
+                        </FormControl>
                     </Grid>
                     <Grid item>
                         <Button
@@ -257,8 +276,8 @@ const Form = props => {
                             type="reset"
                             variant="contained"
                             onClick={() => {
-                                setAutor({})
                                 setEdit(false)
+                                setEstudiante({})
                             }}
                             size="small"
                             className={classes.button}
@@ -266,21 +285,21 @@ const Form = props => {
                         >Limpiar</Button>
                     </Grid>
                 </Grid>
-            </form>
-            <Snackbar
-                open={open}
-                autoHideDuration={3000}
-                onClose={handleClose}
-            >
-                <Alert
-                    color={edit ? "success" : "info"}
-                    elevation={0}
-                    variant="standard"
+                <Snackbar
+                    open={open}
+                    autoHideDuration={3000}
                     onClose={handleClose}
                 >
-                    Guardado Correctamente
-                </Alert>
-            </Snackbar>
+                    <Alert
+                        color={edit ? "success" : "info"}
+                        elevation={0}
+                        variant="standard"
+                        onClose={handleClose}
+                    >
+                        Guardado Correctamente
+                    </Alert>
+                </Snackbar>
+            </form>
         </>
     );
 }
@@ -290,11 +309,11 @@ const Form = props => {
  * @param {*} props 
  */
 
-export const PAutor = props => {
+export const EstudianteView = props => {
     const classes = useStyles();
 
     const [data, setData] = React.useState([]);
-    const [autor, setAutor] = React.useState({});
+    const [estudiante, setEstudiante] = React.useState({});
 
     const [edit, setEdit] = React.useState(false);
     const [state, setState] = React.useState(true);
@@ -302,7 +321,7 @@ export const PAutor = props => {
 
     const editMode = row => {
         setEdit(true);
-        setAutor(row);
+        setEstudiante(row);
     }
 
     React.useEffect(() => {
@@ -317,7 +336,7 @@ export const PAutor = props => {
     return (
         <React.Fragment>
             <Typography variant="h4" gutterBottom color="primary">
-                <strong>GESTIONAR AUTOR</strong>
+                <strong>GESTIONAR ESTUDIANTE</strong>
             </Typography>
             <Grid
                 container
@@ -328,20 +347,20 @@ export const PAutor = props => {
                 <Grid item xs={12} sm={4}>
                     <Paper className={classes.paper}>
                         <Title>
-                            {edit ? "Editar " : "Crear "}Autor
+                            {edit ? "Editar " : "Crear "}Estudiante
                         </Title>
                         <Form
                             classes={classes}
-                            edit={edit} autor={autor}
+                            edit={edit} estudiante={estudiante}
                             setEdit={setEdit}
-                            setAutor={setAutor}
+                            setEstudiante={setEstudiante}
                             setState={setState}
                         />
                     </Paper>
                 </Grid>
                 <Grid item xs={12} sm={8}>
                     <Paper className={classes.paper}>
-                        <Title>Ver Autores</Title>
+                        <Title>Ver Estudiantes</Title>
                         <DataTable
                             data={data}
                             setState={setState}

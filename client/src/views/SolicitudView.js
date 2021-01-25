@@ -43,13 +43,14 @@ import {
 } from '@material-ui/icons'
 
 import Title from './utils/Title';
+import { SolicitudController } from '../controllers/solicitudController';
 
 
 const context = React.createContext();
 
 const ROOT = "http://localhost:8000/api";
 const URL = "http://localhost:8000/api/solicitudes";
-
+const controller = new SolicitudController();
 
 const useStyles = makeStyles((theme) => ({
     button: {
@@ -279,32 +280,15 @@ const Form = props => {
         estudiantes, classes, solicitados, setState
     } = React.useContext(context);
 
-    const onSubmit = event => {
-        // event.preventDefault();
-        if (solicitados.length > 0) {
-            model["librosID"] = solicitados;
-            fetch(`${URL}/${model["id"] ?? ""}`, {
-                method: edit ? "PUT" : "POST",
-                headers: {
-                    "Accept": "Application/json",
-                    "Content-Type": "Application/json",
-                },
-                body: JSON.stringify(model)
-            })
-                .then(_ => setState(true))
-                .catch(err => console.error(err))
-        }
-
-    }
-
-    const onInput = target => {
-        const { name, value } = target;
-        model[name] = value;
-        setModel(model);
-    }
-
     return (
-        <form onSubmit={onSubmit}>
+        <form onSubmit={async event => {
+            if (solicitados.length > 0) {
+                model["librosID"] = solicitados;
+                await controller.onSubmit([
+                    setState
+                ], model, edit)
+            }
+        }}>
             <Grid
                 container
                 spacing={3}
@@ -319,7 +303,9 @@ const Form = props => {
                             required={!edit}
                             name="cantidadDias"
                             defaultValue={model["cantidad"] ?? ""}
-                            onChange={event => onInput(event.target)}
+                            onChange={event => controller.onInput(
+                                event.target, model, setModel
+                            )}
                         >
                             {dias.map(tipo => (
                                 <MenuItem key={tipo} alignItems="center" value={tipo}>{tipo}</MenuItem>
@@ -334,7 +320,9 @@ const Form = props => {
                             required={!edit}
                             name="estudianteID"
                             defaultValue={model["estudianteID"] ?? ''}
-                            onChange={event => onInput(event.target)}
+                            onChange={event => controller.onInput(
+                                event.target, model, setModel
+                            )}
                         >
                             {estudiantes.map(e => (
                                 <MenuItem key={e.id} alignItems="center" value={e.id}>{e.nombre}</MenuItem>
@@ -370,7 +358,7 @@ const Form = props => {
     );
 }
 
-export const PSolicitud = props => {
+export const SolicitudView = props => {
     const classes = useStyles();
 
     const [edit, setEdit] = React.useState(false);
