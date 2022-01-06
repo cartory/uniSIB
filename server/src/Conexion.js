@@ -3,12 +3,7 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-const db = mysql2.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-});
+const db = mysql2.createConnection(process.env.DATABASE_URL)
 
 db.connect((err) => {
     if (err) {
